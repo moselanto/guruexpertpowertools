@@ -1,0 +1,190 @@
+/* ============================================================
+   Guru Expert Power Tools - Homepage design layer (v3)
+   Loaded only on the front page (after theme + industrial).
+   All rules are scoped to .gx-home / .gx-* so nothing else is affected.
+   ============================================================ */
+
+.gx-home{--gx-green:#208050;--gx-green-d:#17663F;--gx-ink:#0E2A1C;--gx-line:#e6efe9;--gx-soft:#eef4f0}
+.gx-home img{display:block}
+
+/* ---------- Buttons ---------- */
+.gx-btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;font-weight:800;font-size:.95rem;
+  padding:.85rem 1.5rem;border-radius:10px;text-decoration:none;letter-spacing:.01em;border:0;cursor:pointer;
+  transition:transform .12s ease,box-shadow .15s ease,background .15s ease,color .15s ease}
+.gx-btn:active{transform:translateY(1px)}
+.gx-btn--solid{background:#fff;color:#0E2A1C}
+.gx-btn--solid:hover{background:#eafff2;color:#0E2A1C;box-shadow:0 12px 28px rgba(0,0,0,.22)}
+.gx-btn--wa{background:#25D366;color:#fff}
+.gx-btn--wa:hover{background:#1db354;color:#fff}
+.gx-btn--outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.65)}
+.gx-btn--outline:hover{background:#fff;color:#0E2A1C}
+
+.gx-eyebrow{display:inline-block;text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;font-weight:800;
+  color:#8ff0b6;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:6px 13px;border-radius:999px;margin-bottom:18px}
+
+/* ---------- Hero slider ---------- */
+.gx-hero-slider{position:relative;overflow:hidden;color:#fff;
+  background:linear-gradient(155deg,#0E2A1C 0%,#124a2d 60%,#17663F 130%)}
+.gx-slides{position:relative;min-height:clamp(440px,58vh,600px)}
+.gx-slide{position:absolute;inset:0;display:flex;align-items:center;background-size:cover;background-position:center;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .8s ease}
+.gx-slide.is-active{opacity:1;visibility:visible;pointer-events:auto}
+.gx-slide__inner{width:100%}
+.gx-slide__content{max-width:600px;padding:44px 0}
+.gx-slide__title{font-family:"Oswald",Inter,system-ui,sans-serif;font-size:clamp(2rem,4.7vw,3.5rem);line-height:1.03;
+  margin:0 0 16px;color:#fff;font-weight:700;letter-spacing:.005em;text-transform:uppercase}
+.gx-slide__title span{color:#5FD08E}
+.gx-slide__lead{font-size:clamp(1rem,1.35vw,1.18rem);line-height:1.6;color:#e4f0e8;max-width:46ch;margin:0 0 26px}
+.gx-slide__cta{display:flex;gap:12px;flex-wrap:wrap}
+
+/* Slide content entrance (only once JS marks the slider ready) */
+.gx-hero-slider.is-ready .gx-slide__content>*{opacity:0;transform:translateY(18px)}
+.gx-hero-slider.is-ready .gx-slide.is-active .gx-slide__content>*{opacity:1;transform:none;
+  transition:opacity .55s ease,transform .55s ease}
+.gx-hero-slider.is-ready .gx-slide.is-active .gx-slide__content>*:nth-child(1){transition-delay:.10s}
+.gx-hero-slider.is-ready .gx-slide.is-active .gx-slide__content>*:nth-child(2){transition-delay:.18s}
+.gx-hero-slider.is-ready .gx-slide.is-active .gx-slide__content>*:nth-child(3){transition-delay:.26s}
+.gx-hero-slider.is-ready .gx-slide.is-active .gx-slide__content>*:nth-child(4){transition-delay:.34s}
+
+/* Arrows + dots */
+.gx-slider__arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:48px;height:48px;border-radius:50%;
+  border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.16);color:#fff;
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .15s ease,color .15s ease,transform .15s ease}
+.gx-slider__arrow:hover{background:#20D060;color:#0E2A1C}
+.gx-slider__arrow:active{transform:translateY(-50%) scale(.94)}
+.gx-slider__arrow--prev{left:16px}
+.gx-slider__arrow--next{right:16px}
+.gx-slider__dots{position:absolute;left:0;right:0;bottom:16px;z-index:4;display:flex;gap:9px;justify-content:center}
+.gx-slider__dot{width:11px;height:11px;border-radius:50%;padding:0;cursor:pointer;background:transparent;
+  border:2px solid rgba(255,255,255,.75);transition:background .15s ease,border-color .15s ease,transform .15s ease}
+.gx-slider__dot:hover{border-color:#fff}
+.gx-slider__dot.is-active{background:#20D060;border-color:#20D060;transform:scale(1.18)}
+.gx-hero-slider:not(.is-ready) .gx-slider__arrow,
+.gx-hero-slider:not(.is-ready) .gx-slider__dots{display:none}
+
+/* Quick category chips (dark bar under the slides) */
+.gx-quickcats{background:rgba(0,0,0,.16);border-top:1px solid rgba(255,255,255,.12)}
+.gx-quickcats__inner{display:flex;gap:9px;flex-wrap:nowrap;align-items:center;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-top:13px;padding-bottom:13px}
+.gx-quickcats__inner::-webkit-scrollbar{display:none}
+.gx-quickcats__label{flex:none;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#9be3b6;margin-right:2px}
+.gx-quickcats a{flex:none;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff;
+  padding:7px 14px;border-radius:999px;font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap;
+  transition:background .15s ease,color .15s ease,border-color .15s ease,transform .15s ease}
+.gx-quickcats a:hover{background:#20D060;color:#0E2A1C;border-color:#20D060;transform:translateY(-1px)}
+
+/* ---------- Section shell + heading ---------- */
+.gx-section{padding:46px 0}
+.gx-section--tint{background:var(--gx-soft)}
+.gx-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}
+.gx-head--center{justify-content:center;text-align:center;margin-bottom:22px}
+.gx-head__eyebrow{text-transform:uppercase;letter-spacing:.15em;font-size:.72rem;font-weight:800;color:#208050;margin:0 0 6px}
+.gx-head h2{font-family:"Oswald",Inter,system-ui,sans-serif;font-size:clamp(1.55rem,2.7vw,2.1rem);margin:0;
+  color:#0E2A1C;font-weight:700;text-transform:uppercase;letter-spacing:.01em}
+.gx-head a{color:#17663F;font-weight:800;font-size:.9rem;text-decoration:none;white-space:nowrap}
+.gx-head a:hover{color:#208050}
+
+/* ---------- Benefits ---------- */
+.gx-benefits{background:#fff;padding:22px 0;border-bottom:1px solid var(--gx-line)}
+.gx-benefits__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.gx-benefit{display:flex;gap:12px;align-items:center;background:#f6faf7;border:1px solid var(--gx-line);border-radius:12px;padding:13px 15px;
+  transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease}
+.gx-benefit:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(14,42,28,.08);border-color:#cfe6d8}
+.gx-benefit__icon{flex:none;width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#208050,#17663F);color:#fff;display:flex;align-items:center;justify-content:center}
+.gx-benefit__icon svg{width:21px;height:21px}
+.gx-benefit__text strong{display:block;font-size:.9rem;color:#0E2A1C;margin-bottom:2px;line-height:1.2}
+.gx-benefit__text span{font-size:.8rem;color:#5b6472;line-height:1.35}
+
+/* ---------- Category cards ---------- */
+.gx-cat{position:relative;display:block;border-radius:16px;overflow:hidden;aspect-ratio:4/3;background:#0E2A1C;
+  text-decoration:none;box-shadow:0 8px 22px rgba(14,42,28,.10)}
+.gx-cat__img,.gx-cat__img img{display:block;width:100%;height:100%;object-fit:cover}
+.gx-cat__img img{transition:transform .45s ease}
+.gx-cat:hover .gx-cat__img img{transform:scale(1.07)}
+.gx-cat__overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;
+  background:linear-gradient(180deg,rgba(14,42,28,0) 34%,rgba(14,42,28,.86) 100%)}
+.gx-cat__name{color:#fff;font-weight:800;font-size:1.02rem;line-height:1.2}
+.gx-cat__count{color:#9be3b6;font-size:.8rem;font-weight:700;margin-top:3px}
+
+/* ---------- Category row (single row, slides left/right) ---------- */
+.gx-catrow-sec{padding-bottom:40px}
+.gx-catrow{position:relative}
+.gx-catrow__vp{overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;
+  scroll-snap-type:x proximity;scrollbar-width:none;cursor:grab}
+.gx-catrow__vp::-webkit-scrollbar{display:none}
+.gx-catrow__vp.is-drag{cursor:grabbing;scroll-behavior:auto}
+.gx-catrow__track{display:flex;gap:16px;padding:4px 2px 12px}
+.gx-catrow__track .gx-cat{flex:0 0 auto;width:clamp(156px,22vw,214px);scroll-snap-align:start}
+.gx-catrow__track .gx-cat__name{font-size:.95rem}
+.gx-catrow__nav{position:absolute;top:calc(50% - 4px);transform:translateY(-50%);z-index:5;width:44px;height:44px;border-radius:50%;
+  border:1px solid var(--gx-line);background:#fff;color:#17663F;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 26px rgba(14,42,28,.18);transition:background .15s ease,color .15s ease,border-color .15s ease,opacity .2s ease}
+.gx-catrow__nav:hover{background:#208050;color:#fff;border-color:#208050}
+.gx-catrow__nav[hidden]{display:none}
+.gx-catrow__nav.is-disabled{opacity:0;pointer-events:none}
+.gx-catrow__nav--prev{left:-8px}
+.gx-catrow__nav--next{right:-8px}
+
+/* ---------- Promo split ---------- */
+.gx-promos{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.gx-promo{position:relative;border-radius:18px;overflow:hidden;min-height:230px;display:flex;flex-direction:column;
+  justify-content:center;padding:30px 34px;color:#fff;background-size:cover;background-position:center;
+  transition:transform .18s ease,box-shadow .18s ease}
+.gx-promo:hover{transform:translateY(-4px);box-shadow:0 20px 44px rgba(14,42,28,.22)}
+.gx-promo--pro{background:linear-gradient(125deg,#208050,#12613a)}
+.gx-promo h3{font-family:"Oswald",Inter,system-ui,sans-serif;font-size:1.55rem;text-transform:uppercase;letter-spacing:.01em;margin:0 0 8px;color:#fff}
+.gx-promo p{margin:0 0 18px;color:#e7f3ec;max-width:36ch;line-height:1.5}
+.gx-promo .gx-btn{align-self:flex-start}
+
+/* ---------- Brands ---------- */
+.gx-brands{background:#fff}
+.gx-brandrow{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.gx-brandrow span{font-family:"Oswald",Inter,system-ui,sans-serif;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:#0E2A1C;background:#f2f7f4;border:1px solid var(--gx-line);padding:12px 22px;border-radius:10px;font-size:1.02rem;
+  transition:transform .15s ease,background .15s ease,color .15s ease,border-color .15s ease}
+.gx-brandrow span:hover{transform:translateY(-2px);background:#208050;color:#fff;border-color:#208050}
+
+/* ---------- Product rows (reuse WooCommerce loop, restyled headers) ---------- */
+.gx-home__rows{background:#fff}
+.gx-home__rows .rk-section--products{padding:34px 0;border-top:1px solid #eef2ef}
+.gx-home__rows .rk-section--products:first-child{border-top:0}
+.gx-home__rows .rk-section__head h2{font-family:"Oswald",Inter,system-ui,sans-serif;text-transform:uppercase;letter-spacing:.01em;
+  font-size:clamp(1.4rem,2.4vw,1.9rem);padding-left:16px}
+.gx-home__rows .rk-section__head h2::before{width:6px;border-radius:3px;background:var(--gx-green)}
+.gx-home__rows .rk-viewmore{color:#17663F;font-weight:800}
+
+/* ---------- Closing CTA band ---------- */
+.gx-cta{background:linear-gradient(120deg,#0E2A1C,#208050);color:#fff}
+.gx-cta__inner{display:flex;align-items:center;justify-content:space-between;gap:26px;padding-top:38px;padding-bottom:38px;flex-wrap:wrap}
+.gx-cta h2{font-family:"Oswald",Inter,system-ui,sans-serif;font-size:clamp(1.4rem,2.5vw,2rem);text-transform:uppercase;letter-spacing:.01em;margin:0 0 6px;color:#fff}
+.gx-cta p{margin:0;color:#dbe9e0}
+.gx-cta__btns{display:flex;gap:12px;flex-wrap:wrap}
+
+/* ---------- Reveal on scroll (progressive; only active once JS adds .gx-animate) ---------- */
+.gx-home.gx-animate .gx-reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.gx-home.gx-animate .gx-reveal.is-in{opacity:1;transform:none}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1024px){
+  .gx-benefits__grid{grid-template-columns:repeat(2,1fr)}
+  .gx-promos{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .gx-section{padding:34px 0}
+  .gx-slides{min-height:clamp(420px,72vh,520px)}
+  .gx-slide__content{padding:34px 0 56px}
+  .gx-slider__arrow{width:40px;height:40px}
+  .gx-slider__arrow--prev{left:8px}
+  .gx-slider__arrow--next{right:8px}
+  .gx-benefits__grid{grid-template-columns:1fr}
+  .gx-catrow__nav{display:none!important}
+  .gx-catrow__track .gx-cat{width:clamp(150px,64vw,180px)}
+  .gx-head{flex-direction:column;align-items:flex-start}
+  .gx-cta__inner{flex-direction:column;align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){
+  .gx-cat__img img,.gx-btn,.gx-slide,.gx-benefit,.gx-promo,.gx-brandrow span{transition:none}
+  .gx-cat:hover .gx-cat__img img{transform:none}
+  .gx-catrow__vp{scroll-behavior:auto}
+  .gx-home.gx-animate .gx-reveal{opacity:1;transform:none;transition:none}
+  .gx-hero-slider.is-ready .gx-slide__content>*{opacity:1;transform:none}
+}

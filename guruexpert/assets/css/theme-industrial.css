@@ -1,0 +1,252 @@
+/* ============================================================
+   Guru Expert Power Tools - UI 2.0 . Bold Industrial (v1.19.0)
+   Layered override (loads after theme.min.css). Redefines the
+   design tokens so token-driven components update automatically,
+   then restyles each surface. Base is a deep green; a bright green
+   accent drives CTAs, prices and tags. Headings use a condensed
+   industrial display face (Oswald).
+   ============================================================ */
+
+/* ---------------- Design tokens ---------------- */
+:root{
+  --rk-primary:#208050;--rk-primary-600:#17663F;--rk-primary-300:#5FD08E;
+  --rk-navy:#0E2A1C;--rk-navy-700:#0A2015;--rk-navy-900:#061510;
+  --rk-accent:#208050;--rk-accent-600:#17663F;--rk-accent-700:#146B41;--rk-accent-tint:rgba(32,128,80,.14);
+  --rk-ink:#141a26;--rk-muted:#5b6472;--rk-line:#dde3ec;--rk-bg:#eef2f7;--rk-white:#fff;
+  --rk-radius:6px;--rk-radius-sm:4px;
+  --rk-shadow:0 2px 10px rgba(14,42,28,.08);
+  --rk-shadow-lg:0 18px 44px rgba(14,42,28,.20);
+  --rk-font:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --rk-display:"Oswald",Impact,"Arial Narrow",system-ui,sans-serif;
+}
+
+/* ---------------- Typography ---------------- */
+h1,h2,h3,h4,.rk-section__head h2,.rk-slide__promo h2,.rk-vertcat h2,
+.single-product .product_title,.entry-title,.rk-filters__title{
+  font-family:var(--rk-display);font-weight:700;letter-spacing:.01em}
+body{background:var(--rk-bg)}
+
+/* ---------------- Buttons ---------------- */
+.rk-btn{border-radius:var(--rk-radius-sm);text-transform:uppercase;letter-spacing:.045em;
+  font-weight:800;font-size:.85rem;padding:.82rem 1.4rem}
+.rk-btn--primary:hover{background:var(--rk-primary-600);transform:translateY(-1px);box-shadow:var(--rk-shadow)}
+.rk-btn--accent{background:var(--rk-accent);color:var(--rk-navy)}
+.rk-btn--accent:hover{background:var(--rk-accent-600);color:var(--rk-navy);transform:translateY(-1px)}
+.rk-btn--ghost:hover{border-color:var(--rk-accent);color:var(--rk-navy)}
+
+/* ---------------- Header + search ---------------- */
+.rk-header__mid{border-bottom:3px solid var(--rk-accent)}
+.rk-header__contact a:hover{color:var(--rk-accent)}
+.rk-search button{background:var(--rk-accent);color:var(--rk-navy);text-transform:uppercase;letter-spacing:.04em;font-weight:800}
+.rk-search button:hover{background:var(--rk-accent-600)}
+.rk-cart-count{background:var(--rk-accent);color:var(--rk-navy)}
+
+/* ---------------- Primary nav: uppercase + teal underline ---------------- */
+.rk-nav a{text-transform:uppercase;letter-spacing:.05em;font-weight:700;font-size:.84rem;position:relative}
+.rk-nav a::after{content:"";position:absolute;left:14px;right:14px;bottom:9px;height:2px;
+  background:var(--rk-accent);transform:scaleX(0);transform-origin:left;transition:transform .2s}
+.rk-nav a:hover::after,.rk-nav .current-menu-item>a::after{transform:scaleX(1)}
+.rk-nav a:hover,.rk-nav .current-menu-item>a{color:#fff}
+
+/* ---------------- Section headers: teal notch ---------------- */
+.rk-section__head h2{text-transform:uppercase;letter-spacing:.02em;font-size:1.7rem;position:relative;padding-left:16px}
+.rk-section__head h2::before{content:"";position:absolute;left:0;top:.14em;bottom:.14em;width:5px;
+  background:var(--rk-accent);border-radius:2px}
+.rk-section__head .rk-viewmore{color:var(--rk-accent-700);text-transform:uppercase;letter-spacing:.04em;font-weight:800;font-size:.82rem}
+.rk-section__head .rk-viewmore:hover{color:var(--rk-accent-600)}
+
+/* ---------------- Hero ---------------- */
+.rk-vertcat h2{text-transform:uppercase;letter-spacing:.04em;border-left:5px solid var(--rk-accent)}
+.rk-vertcat a:hover{background:var(--rk-bg);color:var(--rk-navy);padding-left:16px}
+.rk-slide__promo h2{text-transform:uppercase;letter-spacing:.01em}
+@media(min-width:601px){.rk-slide__promo h2{font-size:2.6rem}}
+.rk-slide__promo .rk-btn,.rk-slide__promo .rk-btn--primary{background:var(--rk-accent);color:var(--rk-navy)}
+.rk-slide__promo .rk-btn:hover,.rk-slide__promo .rk-btn--primary:hover{background:var(--rk-accent-600);color:var(--rk-navy)}
+.rk-slider__dots button[aria-current="true"]{background:var(--rk-accent)}
+.rk-slider__arrow:hover{background:var(--rk-accent);border-color:var(--rk-accent);color:var(--rk-navy)}
+
+/* ---------------- Category cards: photo-forward ---------------- */
+.rk-catcard{border:1.5px solid var(--rk-line);border-radius:var(--rk-radius);padding:14px 12px 16px;position:relative;overflow:hidden}
+.rk-catcard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--rk-accent);
+  transform:scaleX(0);transform-origin:left;transition:transform .2s;z-index:2}
+.rk-catcard:hover::before{transform:scaleX(1)}
+.rk-catcard:hover{border-color:var(--rk-navy);box-shadow:var(--rk-shadow-lg);transform:translateY(-5px)}
+.rk-catcard img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;background:#fff;
+  border:1px solid var(--rk-line);border-radius:var(--rk-radius-sm);padding:0;margin:0 0 12px}
+.rk-catcard h3{font-family:var(--rk-display);text-transform:uppercase;letter-spacing:.02em;font-size:.92rem}
+.rk-catcard small{color:var(--rk-accent-700);font-weight:800}
+
+/* ---------------- Product cards ---------------- */
+.rk-card,ul.products li.product{border:1.5px solid var(--rk-line);border-radius:var(--rk-radius);overflow:hidden}
+.rk-card::before,ul.products li.product::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--rk-accent);transform:scaleX(0);transform-origin:left;transition:transform .2s;z-index:3}
+.rk-card:hover::before,ul.products li.product:hover::before{transform:scaleX(1)}
+.rk-card:hover,ul.products li.product:hover{border-color:var(--rk-navy);box-shadow:var(--rk-shadow-lg)}
+.rk-card__price,ul.products li.product .price{color:var(--rk-accent-700);font-family:var(--rk-display);font-size:1.28rem;letter-spacing:.01em}
+.rk-card__price del,ul.products li.product .price del{color:var(--rk-muted);font-family:var(--rk-font)}
+.rk-icon-btn:hover{background:var(--rk-accent);border-color:var(--rk-accent);color:var(--rk-navy)}
+
+/* Badges */
+.rk-badge{border-radius:3px;text-transform:uppercase;letter-spacing:.04em;font-size:.68rem;padding:4px 9px}
+.rk-badge--sale{background:var(--rk-accent);color:var(--rk-navy)}
+.rk-badge--feat{background:var(--rk-navy);color:#fff}
+
+/* Add-to-cart -> teal CTA (loop) */
+.rk-card .rk-btn,ul.products li.product a.button,
+.woocommerce ul.products li.product a.button.add_to_cart_button,
+.woocommerce a.button.add_to_cart_button{
+  background:var(--rk-accent) !important;color:var(--rk-navy) !important;
+  text-transform:uppercase;letter-spacing:.04em;font-weight:800;border-radius:var(--rk-radius-sm)}
+.rk-card .rk-btn:hover,ul.products li.product a.button:hover,
+.woocommerce a.button.add_to_cart_button:hover{background:var(--rk-accent-600) !important;color:var(--rk-navy) !important}
+
+/* ---------------- Single product (PDP) ---------------- */
+.single-product .price{color:var(--rk-accent-700) !important;font-family:var(--rk-display);font-size:1.8rem}
+.single-product .price del{font-family:var(--rk-font)}
+.woocommerce div.product form.cart .button,.single_add_to_cart_button{
+  background:var(--rk-accent) !important;color:var(--rk-navy) !important;text-transform:uppercase;
+  letter-spacing:.05em;font-weight:800;border-radius:var(--rk-radius-sm);padding:1rem 2rem !important}
+.woocommerce div.product form.cart .button:hover,.single_add_to_cart_button:hover{
+  background:var(--rk-accent-600) !important;color:var(--rk-navy) !important}
+.woocommerce-tabs ul.tabs li.active a{border-bottom-color:var(--rk-accent)}
+.rk-trust svg{color:var(--rk-accent-700)}
+
+/* ---------------- Shop toolbar ---------------- */
+.rk-sort__pill:hover{border-color:var(--rk-accent);color:var(--rk-navy)}
+
+/* ---------------- Cart & checkout ---------------- */
+.woocommerce a.checkout-button,.woocommerce .wc-proceed-to-checkout a.button,
+.woocommerce #place_order,#place_order{
+  background:var(--rk-accent) !important;color:var(--rk-navy) !important;text-transform:uppercase;
+  letter-spacing:.05em;font-weight:800;border-radius:var(--rk-radius-sm)}
+.woocommerce a.checkout-button:hover,.woocommerce #place_order:hover{
+  background:var(--rk-accent-600) !important;color:var(--rk-navy) !important}
+
+/* ---------------- Trust band ---------------- */
+.rk-trustband__icon{background:var(--rk-accent-tint)}
+.rk-trustband__icon svg{color:var(--rk-accent)}
+
+/* ---------------- Footer ---------------- */
+.rk-footer{background:var(--rk-navy-900);border-top:4px solid var(--rk-accent)}
+.rk-footer h3{font-family:var(--rk-display);text-transform:uppercase;letter-spacing:.03em;position:relative;padding-bottom:10px}
+.rk-footer h3::after{content:"";position:absolute;left:0;bottom:0;width:34px;height:3px;background:var(--rk-accent)}
+.rk-footer a:hover{color:var(--rk-accent)}
+.rk-payments span{border-radius:3px}
+
+/* ---------------- Floating + focus ---------------- */
+.rk-backtop{background:var(--rk-accent);color:var(--rk-navy)}
+.rk-backtop:hover{background:var(--rk-accent-600)}
+:focus-visible{outline:2px solid var(--rk-accent);outline-offset:2px}
+
+/* ---------------- Reduced motion ---------------- */
+@media(prefers-reduced-motion:reduce){
+  .rk-catcard,.rk-card,.rk-btn,.rk-nav a::after{transition:none}
+  .rk-catcard:hover,.rk-card:hover,.rk-btn:hover{transform:none}
+}
+
+/* All Categories panel: bounded height so it SCROLLS through every category instead of expanding the layout */
+.rk-vertcat ul{max-height:336px;min-height:0;overflow-y:auto}
+
+
+/* ================= Guru Expert Power Tools - green theme refinements ================= */
+/* White text on all green CTAs (buttons, search, badges, cart) for AA contrast + brand parity */
+.rk-btn--accent,.rk-btn--accent:hover,
+.rk-search button,.rk-search button:hover,
+.rk-cart-count,
+.rk-slide__promo .rk-btn,.rk-slide__promo .rk-btn--primary,
+.rk-slide__promo .rk-btn:hover,.rk-slide__promo .rk-btn--primary:hover,
+.rk-badge--sale,
+.rk-backtop,.rk-backtop:hover{color:#fff}
+.rk-card .rk-btn,ul.products li.product a.button,
+.woocommerce ul.products li.product a.button.add_to_cart_button,
+.woocommerce a.button.add_to_cart_button,.woocommerce a.button.add_to_cart_button:hover,
+.woocommerce div.product form.cart .button,.single_add_to_cart_button,.single_add_to_cart_button:hover,
+.woocommerce a.checkout-button,.woocommerce .wc-proceed-to-checkout a.button,
+.woocommerce #place_order,#place_order{color:#fff !important}
+/* Green category sidebar header, mirroring the reference design */
+.rk-vertcat h2{background:var(--rk-primary);color:#fff}
+
+/* ================= Mobile bottom navigation bar ================= */
+.gx-botnav{display:none;transition:transform .2s ease}
+@media(max-width:767px){
+  .gx-botnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:1000;justify-content:space-around;align-items:flex-end;
+    background:var(--rk-white);border-top:1px solid var(--rk-line);box-shadow:0 -6px 20px rgba(14,42,28,.12);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .gx-botnav__item{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;
+    text-decoration:none;color:var(--rk-navy);font-size:.66rem;font-weight:700;letter-spacing:.02em;text-transform:uppercase}
+  .gx-botnav__item svg{width:23px;height:23px}
+  .gx-botnav__item:hover,.gx-botnav__item:focus-visible{color:var(--rk-primary)}
+  .gx-botnav__item>span:last-child{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .gx-botnav__ico{position:relative;display:inline-flex}
+  .gx-botnav__count{position:absolute;top:-7px;right:-10px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;
+    background:var(--rk-primary);color:#fff;font-size:.62rem;line-height:17px;text-align:center;font-weight:800}
+  .gx-botnav__count.is-empty{display:none}
+  .gx-botnav__item--wa{color:var(--rk-primary)}
+  .gx-botnav__wa{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-top:-18px;
+    border-radius:50%;background:#25D366;color:#fff;border:3px solid var(--rk-white);box-shadow:0 8px 18px rgba(37,211,102,.45)}
+  .gx-botnav__wa svg{width:24px;height:24px}
+  /* Keep page content clear of the fixed bar */
+  body{padding-bottom:64px}
+  /* Avoid clashing with existing floating controls / overlays on mobile */
+  .rk-whatsapp{display:none!important}
+  .rk-backtop{bottom:76px}
+  body.rk-noscroll .gx-botnav,
+  body.rk-sticky-on .gx-botnav{transform:translateY(110%)}
+}
+@media(prefers-reduced-motion:reduce){.gx-botnav{transition:none}}
+
+
+/* ================= Mobile product-card CTAs (Add to Cart + Order on WhatsApp) ================= */
+/* Narrow 2-up cards: keep "Add to Cart" on ONE line, match the two buttons as a tidy, tappable pair. */
+@media(max-width:600px){
+  .rk-card .rk-btn,
+  ul.products li.product a.button,
+  .woocommerce ul.products li.product a.button.add_to_cart_button,
+  .woocommerce a.button.add_to_cart_button{
+    margin-top:8px;padding:.62rem .5rem;font-size:.78rem;letter-spacing:.01em;
+    white-space:nowrap;line-height:1.1;min-height:42px}
+  .rk-wa-btn{margin-top:6px;padding:.55rem .5rem;font-size:.74rem;min-height:42px;gap:.3rem}
+  .rk-wa-btn svg{width:15px;height:15px}
+}
+@media(max-width:360px){
+  .rk-card .rk-btn,
+  ul.products li.product a.button,
+  .woocommerce a.button.add_to_cart_button{font-size:.72rem;letter-spacing:0;padding:.6rem .35rem}
+  .rk-wa-btn{font-size:.68rem;padding:.55rem .35rem}
+}
+
+
+/* ================= Checkout (WooCommerce Blocks + classic) polish ================= */
+.woocommerce-checkout .wc-block-checkout,.woocommerce-checkout form.checkout{max-width:var(--rk-container);margin:0 auto}
+.gx-delivery-note{max-width:var(--rk-container);margin:0 auto 18px;background:var(--rk-accent-tint,#eafaf0);border:1px solid #bfe6cf;border-left:4px solid var(--rk-primary);border-radius:10px;padding:12px 16px;color:var(--rk-navy);font-size:.92rem;line-height:1.5}
+.gx-delivery-note strong{color:var(--rk-primary-600)}
+.wc-block-components-checkout-step__title,.wc-block-components-title{font-family:var(--rk-display);color:var(--rk-navy);letter-spacing:.01em}
+.wp-block-woocommerce-checkout .wc-block-components-sidebar,.wc-block-checkout__sidebar{background:#fff;border:1px solid var(--rk-line);border-radius:var(--rk-radius);box-shadow:var(--rk-shadow);padding:18px}
+@media(min-width:993px){.wc-block-checkout__sidebar{position:sticky;top:88px}}
+.wc-block-components-totals-footer-item{border-top:2px solid var(--rk-line);color:var(--rk-navy)}
+.wc-block-components-totals-footer-item .wc-block-components-totals-item__value{color:var(--rk-accent-700);font-weight:800}
+.wc-block-components-radio-control__option{border:1px solid var(--rk-line);border-radius:10px;padding:12px 14px 12px 42px;margin-bottom:8px;transition:border-color .15s,box-shadow .15s}
+.wc-block-components-radio-control__option-checked{border-color:var(--rk-primary);box-shadow:0 0 0 3px rgba(32,128,80,.12)}
+.wc-block-components-text-input input,.wc-block-components-address-form input{border-radius:8px}
+.wc-block-components-text-input input:focus{box-shadow:0 0 0 3px rgba(14,42,28,.08)}
+.wc-block-components-checkout-place-order-button,.wc-block-components-button.contained{background:var(--rk-primary) !important;color:#fff !important;border-radius:10px !important;font-weight:800 !important;min-height:52px;letter-spacing:.02em}
+.wc-block-components-checkout-place-order-button:hover,.wc-block-components-button.contained:hover{background:var(--rk-primary-600) !important}
+
+/* ---- Order-received (thank-you) summary: fix cramped/overlapping columns ---- */
+.woocommerce-order-received ul.woocommerce-order-overview.order_details{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.woocommerce-order-received ul.order_details li{word-break:break-word;overflow-wrap:anywhere}
+.woocommerce-order-received ul.order_details li strong{word-break:break-word;overflow-wrap:anywhere}
+@media(max-width:600px){.woocommerce-order-received ul.woocommerce-order-overview.order_details{grid-template-columns:1fr 1fr}}
+
+/* ================= Footer refresh ================= */
+.rk-footer__tag{color:#9fb0a6;font-size:.9rem;line-height:1.5;margin:0 0 14px;max-width:34ch}
+.rk-footer__contact{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-direction:column;gap:10px}
+.rk-footer__contact li{display:flex;gap:10px;align-items:flex-start;font-size:.9rem;color:#c7cfdd;line-height:1.4}
+.rk-footer__contact a{color:#c7cfdd}
+.rk-footer__contact a:hover{color:var(--rk-accent)}
+.rk-fi{flex:0 0 auto;width:18px;height:18px;color:var(--rk-accent);margin-top:1px}
+.rk-footer__wa{display:inline-flex;align-items:center;gap:8px;background:#25D366;color:#fff;font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:999px;text-decoration:none;transition:background .15s,transform .05s}
+.rk-footer__wa:hover{background:#1db855;color:#fff;transform:translateY(-1px)}
+.rk-footer__wa svg{width:18px;height:18px;fill:currentColor}
+.rk-footer .rk-payments span{background:rgba(255,255,255,.06);color:#e7edf5;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:6px 10px;font-size:.72rem;font-weight:700}
+@media(max-width:600px){.gx-delivery-note{margin-bottom:14px;font-size:.88rem}}
