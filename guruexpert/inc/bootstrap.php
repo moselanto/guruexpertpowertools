@@ -15,6 +15,12 @@ $guruexpertpowertools_modules = array(
 	'GuruExpertPowerTools\\Setup',
 	'GuruExpertPowerTools\\Assets',
 	'GuruExpertPowerTools\\Security',
+	/*
+	 * Login hardening for wp-login.php and the WooCommerce My Account/checkout login:
+	 * brute-force lockout, bot honeypot, generic errors, reset throttling, strong
+	 * customer passwords. The autoloader maps Login_Security to inc/class-login-security.php.
+	 */
+	'GuruExpertPowerTools\\Login_Security',
 	'GuruExpertPowerTools\\WooCommerce_Support',
 	'GuruExpertPowerTools\\Ajax',
 	'GuruExpertPowerTools\\Customizer',

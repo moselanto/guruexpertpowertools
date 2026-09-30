@@ -51,6 +51,14 @@ final class Security {
 		header( 'Permissions-Policy: geolocation=(), microphone=(), camera=()' );
 		header( 'Cross-Origin-Opener-Policy: same-origin' );
 		header( 'X-Permitted-Cross-Domain-Policies: none' );
+		/*
+		 * HSTS tells browsers to always use HTTPS for this host, closing the SSL-strip
+		 * window on the login, account and checkout pages. includeSubDomains is left
+		 * off on purpose so a non-HTTPS subdomain (mail, cPanel) is never locked out.
+		 */
+		if ( is_ssl() ) {
+			header( 'Strict-Transport-Security: max-age=31536000' );
+		}
 	}
 
 	/**

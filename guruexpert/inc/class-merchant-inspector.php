@@ -169,6 +169,31 @@ final class Merchant_Inspector {
 			__( 'Open Customizer', 'guruexpertpowertools' )
 		);
 
+		$host     = strtolower( (string) wp_parse_url( home_url(), PHP_URL_HOST ) );
+		$host     = preg_replace( '/^www\./', '', $host );
+		$em_dom   = strtolower( (string) substr( strrchr( $email, '@' ), 1 ) );
+		$email_ok = '' !== $em_dom && $em_dom === $host;
+		$checks[] = $this->check(
+			'Trust & identity',
+			__( 'Contact email uses the store domain', 'guruexpertpowertools' ),
+			$email_ok ? 'pass' : 'warning',
+			$email_ok ? sprintf( __( 'Email %s matches the site domain.', 'guruexpertpowertools' ), $email ) : sprintf( __( 'Email "%1$s" does not match %2$s. Free or mismatched email domains weaken Merchant trust signals.', 'guruexpertpowertools' ), $email, $host ),
+			__( 'Use an address on your own domain (e.g. info@yourdomain) in the Customizer and in Merchant Center.', 'guruexpertpowertools' ),
+			admin_url( 'customize.php' ),
+			__( 'Open Customizer', 'guruexpertpowertools' )
+		);
+
+		$about_pg = $this->page_url( array( 'about-us', 'about' ) );
+		$checks[] = $this->check(
+			'Trust & identity',
+			__( 'About Us page', 'guruexpertpowertools' ),
+			$about_pg ? 'pass' : 'warning',
+			$about_pg ? __( 'An About Us page is published and linked in the footer.', 'guruexpertpowertools' ) : __( 'No About Us page found.', 'guruexpertpowertools' ),
+			__( 'Publish an About Us page naming the registered business, the physical shop and how long you have traded.', 'guruexpertpowertools' ),
+			$about_pg ? $about_pg : admin_url( 'post-new.php?post_type=page' ),
+			$about_pg ? __( 'View page', 'guruexpertpowertools' ) : __( 'Create page', 'guruexpertpowertools' )
+		);
+
 		/* ---- Required policies ---- */
 		$privacy_id = (int) get_option( 'wp_page_for_privacy_policy' );
 		$privacy    = $privacy_id > 0 ? get_permalink( $privacy_id ) : $this->page_url( array( 'privacy-policy', 'privacy' ) );

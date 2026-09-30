@@ -118,3 +118,43 @@ function rk_whatsapp_button( $product, string $extra_class = '' ): string {
 		esc_html__( 'Order on WhatsApp', 'guruexpertpowertools' )
 	);
 }
+
+/**
+ * Resolve the store's trust/legal pages (About, Contact, Shipping, Returns, Terms,
+ * Privacy) by slug so a link to each shows in the footer on every page, even if a
+ * footer menu is later edited or unassigned. Merchant Center's Misrepresentation
+ * review looks for exactly these links site-wide.
+ *
+ * @return array<int, array{label:string,url:string}>
+ */
+function gxpt_legal_links(): array {
+	$cached = wp_cache_get( 'gxpt_legal_links', 'guruexpertpowertools' );
+	if ( is_array( $cached ) ) {
+		return $cached;
+	}
+	$find = static function ( array $slugs ): string {
+		foreach ( $slugs as $slug ) {
+			$page = get_page_by_path( $slug );
+			if ( $page instanceof WP_Post && 'publish' === $page->post_status ) {
+				return (string) get_permalink( $page );
+			}
+		}
+		return '';
+	};
+	$terms = '';
+	if ( function_exists( 'wc_terms_and_conditions_page_id' ) && wc_terms_and_conditions_page_id() > 0 ) {
+		$terms = (string) get_permalink( wc_terms_and_conditions_page_id() );
+	}
+	$privacy = function_exists( 'get_privacy_policy_url' ) ? (string) get_privacy_policy_url() : '';
+	$links   = array(
+		array( 'label' => __( 'About Us', 'guruexpertpowertools' ), 'url' => $find( array( 'about-us', 'about' ) ) ),
+		array( 'label' => __( 'Contact Us', 'guruexpertpowertools' ), 'url' => $find( array( 'contact-us', 'contact' ) ) ),
+		array( 'label' => __( 'Shipping & Delivery', 'guruexpertpowertools' ), 'url' => $find( array( 'shipping-delivery-policy', 'shipping-delivery', 'shipping-policy', 'shipping' ) ) ),
+		array( 'label' => __( 'Returns & Refunds', 'guruexpertpowertools' ), 'url' => $find( array( 'return-refund-policy', 'refund-returns', 'refund_returns', 'returns' ) ) ),
+		array( 'label' => __( 'Terms & Conditions', 'guruexpertpowertools' ), 'url' => '' !== $terms ? $terms : $find( array( 'terms-conditions', 'terms-and-conditions', 'terms' ) ) ),
+		array( 'label' => __( 'Privacy Policy', 'guruexpertpowertools' ), 'url' => '' !== $privacy ? $privacy : $find( array( 'privacy-policy', 'privacy-policy-2', 'privacy' ) ) ),
+	);
+	$links = array_values( array_filter( $links, static fn( $l ) => '' !== $l['url'] ) );
+	wp_cache_set( 'gxpt_legal_links', $links, 'guruexpertpowertools', HOUR_IN_SECONDS );
+	return $links;
+}

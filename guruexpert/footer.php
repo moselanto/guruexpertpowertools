@@ -38,7 +38,7 @@ $rk_whatsapp = get_theme_mod( 'guruexpertpowertools_whatsapp', '254708777192' );
 			<div>
 				<h3><?php esc_html_e( 'We Accept', 'guruexpertpowertools' ); ?></h3>
 				<div class="rk-payments">
-					<span>M-PESA</span><span>Cash on Delivery (Nairobi)</span><span>Visa &amp; Mastercard (in shop)</span>
+					<span>M-PESA</span><span>Pay on Delivery (Nairobi)</span><span>Visa &amp; Mastercard (in shop only)</span>
 				</div>
 				<h3 style="margin-top:18px"><?php esc_html_e( 'Secure Shopping', 'guruexpertpowertools' ); ?></h3>
 				<div class="rk-payments"><span>SSL Secured</span><span><?php esc_html_e( 'Walk-in Shop in Nairobi', 'guruexpertpowertools' ); ?></span></div>
@@ -47,6 +47,15 @@ $rk_whatsapp = get_theme_mod( 'guruexpertpowertools_whatsapp', '254708777192' );
 	</div>
 	<div class="rk-footer__bar">
 		<div class="container">
+			<?php $gxpt_legal = function_exists( 'gxpt_legal_links' ) ? gxpt_legal_links() : array(); ?>
+			<?php if ( $gxpt_legal ) : ?>
+			<nav class="gxpt-legal" aria-label="<?php esc_attr_e( 'Store policies', 'guruexpertpowertools' ); ?>">
+				<?php foreach ( $gxpt_legal as $gxpt_link ) : ?>
+					<a href="<?php echo esc_url( $gxpt_link['url'] ); ?>"><?php echo esc_html( $gxpt_link['label'] ); ?></a>
+				<?php endforeach; ?>
+			</nav>
+			<?php endif; ?>
+			<p class="gxpt-legal__id"><?php echo esc_html( get_theme_mod( 'guruexpertpowertools_address', 'Magomano House, 1st Floor, Room 10D, Tom Mboya Street, Nairobi' ) ); ?>, <?php esc_html_e( 'Kenya', 'guruexpertpowertools' ); ?> &middot; <?php echo esc_html( get_theme_mod( 'guruexpertpowertools_phone', '+254 708 777192' ) ); ?> &middot; <?php echo esc_html( get_theme_mod( 'guruexpertpowertools_email', 'info@guruexpertpowertools.co.ke' ) ); ?></p>
 			&copy; <?php echo esc_html( gmdate( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?>. <?php esc_html_e( 'All rights reserved.', 'guruexpertpowertools' ); ?>
 			<?php /* Lets visitors withdraw or change consent after the banner is dismissed, which the DPA 2019 requires. */ ?>
 			<a class="rk-footer__cookies" href="#" data-gxpt-cc-open><?php esc_html_e( 'Cookie settings', 'guruexpertpowertools' ); ?></a>

@@ -250,3 +250,6 @@ body{background:var(--rk-bg)}
 .rk-footer__wa svg{width:18px;height:18px;fill:currentColor}
 .rk-footer .rk-payments span{background:rgba(255,255,255,.06);color:#e7edf5;border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:6px 10px;font-size:.72rem;font-weight:700}
 @media(max-width:600px){.gx-delivery-note{margin-bottom:14px;font-size:.88rem}}
+
+/* Footer policy links (Merchant Center trust signals) */
+.gxpt-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin:0 0 10px}.gxpt-legal a{color:#c7cfdd;text-decoration:underline;text-underline-offset:2px}.gxpt-legal a:hover{color:var(--rk-primary-300)}.gxpt-legal__id{margin:0 0 8px;font-size:.8rem;opacity:.85}
