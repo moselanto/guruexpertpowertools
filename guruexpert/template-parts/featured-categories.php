@@ -29,7 +29,7 @@ $gx_cats = array_slice(
 		array_filter(
 			$gx_cats,
 			static function ( $t ) use ( $gx_hidden ) {
-				return \! in_array( $t->slug, $gx_hidden, true );
+				return ! in_array( $t->slug, $gx_hidden, true );
 			}
 		)
 	),
