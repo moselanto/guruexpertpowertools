@@ -232,7 +232,7 @@ final class Schema {
 			),
 			'priceRange'              => (string) get_theme_mod( 'guruexpertpowertools_price_range', 'KSh 500 - KSh 500,000' ),
 			'currenciesAccepted'      => 'KES',
-			'paymentAccepted'         => 'M-PESA, Cash, Bank Transfer, Credit Card',
+			'paymentAccepted'         => 'M-PESA, Cash on Delivery',
 			'openingHoursSpecification' => array(
 				array(
 					'@type'     => 'OpeningHoursSpecification',
