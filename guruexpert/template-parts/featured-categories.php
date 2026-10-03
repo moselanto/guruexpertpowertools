@@ -11,8 +11,32 @@ defined( 'ABSPATH' ) || exit;
 if ( ! taxonomy_exists( 'product_cat' ) ) {
 	return;
 }
-$gx_cats = function_exists( 'rk_cached_terms' ) ? rk_cached_terms( 'product_cat', 16 ) : array();
+$gx_cats = function_exists( 'rk_cached_terms' ) ? rk_cached_terms( 'product_cat', 40 ) : array();
 if ( empty( $gx_cats ) || is_wp_error( $gx_cats ) ) {
+	return;
+}
+/*
+ * Keep the homepage focused on power tools, generators, solar and hardware.
+ * Off-category ranges are hidden here so the store matches its domain
+ * (Google Merchant Center misrepresentation review).
+ */
+$gx_hidden = (array) apply_filters(
+	'guruexpertpowertools_homepage_hidden_categories',
+	array( 'incubators', 'egg-incubators', 'refrigerators', 'sewing-machines', 'home-appliances', 'speakers-audio', 'weighing-scales', 'kitchen-scales', 'bicycles', 'toys', 'uncategorized' )
+);
+$gx_cats = array_slice(
+	array_values(
+		array_filter(
+			$gx_cats,
+			static function ( $t ) use ( $gx_hidden ) {
+				return \! in_array( $t->slug, $gx_hidden, true );
+			}
+		)
+	),
+	0,
+	16
+);
+if ( empty( $gx_cats ) ) {
 	return;
 }
 $gx_shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
