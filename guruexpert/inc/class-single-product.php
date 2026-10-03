@@ -77,7 +77,7 @@ final class Single_Product {
 
 		// Payment methods.
 		echo '<div class="rk-pdp-pay"><span class="rk-pdp-pay__label">' . esc_html__( 'We accept:', 'guruexpertpowertools' ) . '</span>';
-		foreach ( array( 'M-PESA', 'Cash on Delivery (Nairobi)', 'Visa & Mastercard (in shop)' ) as $pay ) {
+		foreach ( array( 'M-PESA', 'Cash on Delivery (Nairobi only)' ) as $pay ) {
 			echo '<span class="rk-pay-chip">' . esc_html( $pay ) . '</span>';
 		}
 		echo '</div>';
@@ -117,13 +117,13 @@ final class Single_Product {
 		$phone = esc_html( get_theme_mod( 'guruexpertpowertools_phone', '+254 708 777192' ) );
 		$faqs  = array(
 			array( __( 'How soon can I get this delivered?', 'guruexpertpowertools' ), __( 'Nairobi orders are typically delivered same or next business day. Other towns take 1-5 business days. Delivery is KSh 500 flat countrywide on every order, including bulky items.', 'guruexpertpowertools' ) ),
-			array( __( 'How do I pay?', 'guruexpertpowertools' ), __( 'Online orders are paid by M-PESA, or by cash on delivery within Nairobi only; orders outside Nairobi are paid by M-PESA before dispatch. Visa and Mastercard are accepted in person at our Nairobi shop, not at online checkout.', 'guruexpertpowertools' ) ),
+			array( __( 'How do I pay?', 'guruexpertpowertools' ), __( 'Online orders are paid by M-PESA, or by cash on delivery within Nairobi only. Orders outside Nairobi are paid by M-PESA before dispatch.', 'guruexpertpowertools' ) ),
 			// Sourcing claim softened from "only genuine products": an absolute, unverifiable
 			// assertion about every one of 845 lines is a Google Misrepresentation risk. The
 			// revised wording describes the sourcing channel, which is checkable, without
 			// guaranteeing authenticity of each individual item.
 			array( __( 'Is this product covered by warranty?', 'guruexpertpowertools' ), __( 'We source our stock from authorised distributors and suppliers, and items are backed by the manufacturer warranty where applicable. Ask us about the warranty terms for a specific product before you buy.', 'guruexpertpowertools' ) ),
-			array( __( 'Can I return it if there is a problem?', 'guruexpertpowertools' ), __( 'Faulty or incorrect items can be returned within 7 days. See our Return & Refund Policy for details.', 'guruexpertpowertools' ) ),
+			array( __( 'Can I return it if there is a problem?', 'guruexpertpowertools' ), __( 'We accept returns of defective products only. Report a defect within 7 days of delivery and we will repair, exchange or refund the item. We do not accept returns of non-defective items, including change of mind. See our Return & Refund Policy for details.', 'guruexpertpowertools' ) ),
 			array( __( 'How do I get help before buying?', 'guruexpertpowertools' ), __( 'Call or WhatsApp us and our team will help you choose the right tool for the job.', 'guruexpertpowertools' ) . ' ' . $phone ),
 		);
 		echo '<div class="rk-faq">';

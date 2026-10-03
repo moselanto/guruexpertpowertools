@@ -68,7 +68,9 @@ gtag( 'consent', 'default', {
 	wait_for_update: 500
 } );
 gtag( 'set', 'ads_data_redaction', true );
-gtag( 'set', 'url_passthrough', true );
+/* url_passthrough disabled: it appended ?_gl=... tracking parameters to every
+ * internal link while consent was denied, creating duplicate URLs. */
+gtag( 'set', 'url_passthrough', false );
 window.gxptConsent = ( function () {
 	var NAME = '<?php echo $cookie; // phpcs:ignore WordPress.Security.EscapeOutput -- esc_js above. ?>';
 	var REV  = '<?php echo $revision; // phpcs:ignore WordPress.Security.EscapeOutput -- esc_js above. ?>';
