@@ -1,4 +1,4 @@
-/* Guru Expert Power Tools - category sales funnels: price filters, WhatsApp quick order, sticky bar. */
+/* Guru Expert Power Tools - category sales funnels v2: price filters, show more, WhatsApp quick order, jump nav, sticky bar. */
 (() => {
   'use strict';
   const root = document.querySelector('.gx-lp');
@@ -8,25 +8,48 @@
   const wa = (root.getAttribute('data-gx-wa') || '').replace(/[^0-9]/g, '');
   const pageUrl = root.getAttribute('data-gx-page') || window.location.href;
 
-  /* Price-band filter chips */
+  /* Grid: price-band filter + "Show more" */
   const grid = $('[data-gx-filter-target]', root);
   const emptyMsg = $('.gx-lp-empty-filter', root);
+  const moreBtn = $('[data-gx-show-more]', root);
+  let expanded = false;
+  let band = { min: 0, max: 0 };
+  const applyGrid = () => {
+    if (!grid) return;
+    const filtering = band.min > 0 || band.max > 0;
+    let shown = 0;
+    $$('.gx-lp-card', grid).forEach((card) => {
+      const p = parseFloat(card.dataset.price || '0');
+      const inBand = p >= band.min && (band.max === 0 || p < band.max);
+      const collapsed = card.hasAttribute('data-gx-more') && !expanded && !filtering;
+      card.hidden = !inBand || collapsed;
+      if (!card.hidden) shown++;
+    });
+    if (emptyMsg) emptyMsg.hidden = shown > 0;
+    if (moreBtn) moreBtn.hidden = expanded || filtering;
+  };
   $$('.gx-lp-chip', root).forEach((chip) => {
     chip.addEventListener('click', () => {
-      const min = parseFloat(chip.dataset.min || '0');
-      const max = parseFloat(chip.dataset.max || '0');
-      $$('.gx-lp-chip', root).forEach((c) => { c.classList.toggle('is-active', c === chip); c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
-      if (!grid) return;
-      let shown = 0;
-      $$('.gx-lp-card', grid).forEach((card) => {
-        const p = parseFloat(card.dataset.price || '0');
-        const ok = p >= min && (max === 0 || p < max);
-        card.hidden = !ok;
-        if (ok) shown++;
+      band = { min: parseFloat(chip.dataset.min || '0'), max: parseFloat(chip.dataset.max || '0') };
+      $$('.gx-lp-chip', root).forEach((c) => {
+        const on = c === chip;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
-      if (emptyMsg) emptyMsg.hidden = shown > 0;
+      applyGrid();
     });
   });
+  if (moreBtn) {
+    moreBtn.addEventListener('click', () => {
+      const firstHidden = grid ? grid.querySelector('[data-gx-more]') : null;
+      expanded = true;
+      applyGrid();
+      if (firstHidden) {
+        const link = firstHidden.querySelector('.gx-lp-card__title a');
+        if (link) link.focus({ preventScroll: true });
+      }
+    });
+  }
 
   /* Open WhatsApp through a real link click so the theme's WhatsApp conversion
      listener (class-whatsapp-tracking.php) records it like any other WhatsApp tap. */
@@ -54,14 +77,15 @@
     const id = btn.getAttribute('data-gx-order');
     if (form && select && select.querySelector('option[value="' + id + '"]')) {
       select.value = id;
+      select.setAttribute('aria-invalid', 'false');
       form.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      const qty = $('input[name="qty"]', form);
-      window.setTimeout(() => { (qty || select).focus({ preventScroll: true }); }, 450);
+      const name = $('input[name="name"]', form);
+      window.setTimeout(() => { (name || select).focus({ preventScroll: true }); }, 450);
       return;
     }
     const card = btn.closest('.gx-lp-card');
-    const name = card ? (card.querySelector('.gx-lp-card__title') || {}).textContent : '';
-    openWa('Hello Guru Expert Power Tools, I would like to order: ' + (name || '').trim() + '\n' + pageUrl);
+    const title = card ? card.querySelector('.gx-lp-card__title') : null;
+    openWa('Hello Guru Expert Power Tools, I would like to order: ' + (title ? title.textContent.trim() : '') + '\n' + pageUrl);
   });
 
   if (form) {
@@ -69,9 +93,8 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const v = (n) => (form.elements[n] ? String(form.elements[n].value || '').trim() : '');
-      const fields = ['name', 'phone', 'town', 'qty'];
       let bad = null;
-      fields.forEach((n) => {
+      ['product', 'name', 'phone', 'town', 'qty'].forEach((n) => {
         const el = form.elements[n];
         if (!el) return;
         let ok = v(n) !== '';
@@ -81,7 +104,7 @@
         if (!ok && !bad) bad = el;
       });
       if (bad) {
-        if (err) { err.textContent = 'Please fill in your name, a valid phone number, delivery town and quantity.'; err.hidden = false; }
+        if (err) { err.textContent = 'Please choose a product and fill in your name, a valid phone number, delivery town and quantity.'; err.hidden = false; }
         bad.focus();
         return;
       }
@@ -100,6 +123,29 @@
       openWa(lines.join('\n'));
       form.classList.add('is-sent');
     });
+    $$('input, select, textarea', form).forEach((el) => {
+      el.addEventListener('input', () => { if (el.getAttribute('aria-invalid') === 'true' && String(el.value).trim() !== '') el.setAttribute('aria-invalid', 'false'); });
+    });
+  }
+
+  /* Jump nav: highlight the section in view. */
+  const jumpLinks = $$('.gx-lp-jump a', root);
+  if (jumpLinks.length && 'IntersectionObserver' in window) {
+    const map = new Map();
+    jumpLinks.forEach((a) => {
+      const id = (a.getAttribute('href') || '').slice(1);
+      const sec = id ? document.getElementById(id) : null;
+      if (sec) map.set(sec, a);
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((en) => {
+        if (!en.isIntersecting) return;
+        jumpLinks.forEach((a) => a.classList.remove('is-current'));
+        const a = map.get(en.target);
+        if (a) a.classList.add('is-current');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    map.forEach((_a, sec) => io.observe(sec));
   }
 
   /* Sticky mobile action bar: show after the hero scrolls out of view. */

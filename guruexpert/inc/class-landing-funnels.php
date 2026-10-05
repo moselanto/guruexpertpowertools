@@ -40,7 +40,7 @@ final class Landing_Funnels {
 	public const OPTION = 'gxpt_funnels';
 
 	/** Max products in the "Shop the range" grid. */
-	public const GRID_LIMIT = 24;
+	public const GRID_LIMIT = 36;
 
 	/** Resolved funnel for the current request (null = not a funnel). */
 	private static ?array $funnel = null;
@@ -425,7 +425,7 @@ final class Landing_Funnels {
 				'image'    => 'generators',
 				'eyebrow'  => 'Backup & site power',
 				'headline' => 'Generators for dependable backup and site power',
-				'sub'      => 'Petrol and diesel generators from 2.8kVA to 9.3kVA, including key-start, three-phase and open-frame diesel models.',
+				'sub'      => 'Petrol and diesel generators for homes, shops and sites, from compact backup units to key-start, three-phase and open-frame diesel models.',
 				'benefits' => array(
 					array( 'Key start', 'Most models start with a turn of the key.' ),
 					array( 'Petrol and diesel', 'Petrol for occasional backup, diesel for long running hours.' ),
@@ -450,7 +450,7 @@ final class Landing_Funnels {
 				'image'    => 'air-compressors',
 				'eyebrow'  => 'Garages & workshops',
 				'headline' => 'Air compressors for garages, spray painting and workshops',
-				'sub'      => 'Direct-drive and larger electric compressors from 25 to 500 litres, in single and three phase.',
+				'sub'      => 'Compact direct-drive compressors and large workshop units, in single and three phase.',
 				'benefits' => array(
 					array( 'Tank sizes from 25 to 500 litres', 'Compact units for light work, large tanks for busy workshops.' ),
 					array( 'Single and three phase', 'Models for normal power and for industrial supply.' ),
@@ -501,7 +501,7 @@ final class Landing_Funnels {
 				'image'    => 'agricultural-equipment',
 				'eyebrow'  => 'Power for your machines',
 				'headline' => 'Petrol and diesel engines to power your machines',
-				'sub'      => 'Petrol engines from 5.5HP to 8HP and diesel engines from 7HP to 30HP, air- and water-cooled, for pumps, mills, chaff cutters and more.',
+				'sub'      => 'Petrol and diesel engines, air- and water-cooled, to power pumps, posho mills, chaff cutters and other farm and workshop machines.',
 				'benefits' => array(
 					array( 'Petrol and diesel', 'Light petrol engines and economical diesel engines.' ),
 					array( 'Air- and water-cooled', 'Air-cooled for simple upkeep, water-cooled for long heavy-duty runs.' ),
@@ -544,6 +544,131 @@ final class Landing_Funnels {
 	private static function parse_ids( string $raw ): array {
 		$ids = array_map( 'absint', preg_split( '/[^0-9]+/', $raw ) ?: array() );
 		return array_values( array_unique( array_filter( $ids ) ) );
+	}
+
+	/**
+	 * Per-funnel accessory exclusions and quick sizing tables.
+	 *
+	 * "exclude": words that, when found in a product title, keep that product out of the
+	 * funnel (accessories and spares that would otherwise set a misleading "From" price).
+	 * "sizes": typical sizing rows shown with the buying guide (general guidance, labelled so).
+	 *
+	 * @return array<string,array<string,mixed>>
+	 */
+	private static function extras(): array {
+		return (array) apply_filters(
+			'guruexpertpowertools_funnel_extras',
+			array(
+				'generators'          => array(
+					'exclude'     => array( 'regulator', 'stabilizer', 'stabiliser', 'avr', 'changeover', 'cover', 'carburetor', 'carburettor', 'spark plug' ),
+					'sizes_title' => 'Quick sizing guide',
+					'sizes'       => array(
+						array( 'Lights, TV, phone charging, laptop', '1 - 2.8 kVA' ),
+						array( 'Add a fridge or small water pump', '3.8 - 5 kVA' ),
+						array( 'Small shop or office, several appliances', '5 - 7.5 kVA' ),
+						array( 'Welders, borehole pumps, three-phase machines', '7.5 kVA and above' ),
+					),
+				),
+				'welding-machines'    => array(
+					'exclude'     => array( 'electrode', 'electrodes', 'rod', 'rods', 'glass', 'helmet', 'glove', 'gloves', 'mask', 'apron', 'goggles' ),
+					'sizes_title' => 'Quick sizing guide',
+					'sizes'       => array(
+						array( 'Light repairs and thin metal', '120 - 160 A' ),
+						array( 'Gates, grills and general fabrication', '200 A' ),
+						array( 'Heavy fabrication and thick sections', '250 A and above' ),
+						array( 'Sites with no mains power', 'Diesel welder-generator' ),
+					),
+				),
+				'grinders'            => array( 'exclude' => array( 'disc', 'discs', 'disk', 'cup brush', 'flap' ) ),
+				'pressure-washers'    => array( 'exclude' => array( 'hose', 'nozzle', 'lance', 'foam', 'gun' ) ),
+				'water-pumps'         => array(
+					'exclude'     => array( 'pump control', 'pressure switch', 'float switch', 'pipe', 'hose' ),
+					'sizes_title' => 'Quick sizing guide',
+					'sizes'       => array(
+						array( 'Garden watering and tank filling', '1 - 2 inch' ),
+						array( 'Small farm irrigation', '2 inch' ),
+						array( 'Larger plots and draining flooded areas', '3 inch' ),
+						array( 'Weak pressure in a building', 'Booster pump' ),
+					),
+				),
+				'air-compressors'     => array(
+					'exclude'     => array( 'hose', 'coupler', 'fitting', 'spray gun', 'blow gun' ),
+					'sizes_title' => 'Quick sizing guide',
+					'sizes'       => array(
+						array( 'Tyre inflation and blowing dust', '25 - 50 litres' ),
+						array( 'Spray painting and nail guns', '50 - 100 litres' ),
+						array( 'Garage with impact wrenches', '100 - 200 litres' ),
+						array( 'Body shops running several tools', '300 litres and above' ),
+					),
+				),
+				'solar-inverters'     => array(
+					'exclude'     => array( 'cable', 'breaker', 'bracket' ),
+					'sizes_title' => 'Quick sizing guide',
+					'sizes'       => array(
+						array( 'Lights, TV, phones and laptop', '1 - 1.5 kVA' ),
+						array( 'Add a fridge and small appliances', '3 - 3.5 kVA' ),
+						array( 'Whole home, including pump or iron', '5 kVA and above' ),
+					),
+				),
+				'solar-panels'        => array( 'exclude' => array( 'bracket', 'mount', 'mounting', 'cable', 'connector' ) ),
+				'demolition-breakers' => array( 'exclude' => array( 'chisel', 'chisels' ) ),
+				'vacuum-cleaners'     => array( 'exclude' => array( 'filter bag', 'dust bag' ) ),
+				'engines'             => array( 'exclude' => array( 'with', 'cutter', 'chopper', 'trowel', 'pump', 'tractor', 'mill', 'vibrator', 'sprayer', 'generator', 'washer' ) ),
+			)
+		);
+	}
+
+	/**
+	 * Whether a product title passes the funnel's accessory exclusions.
+	 */
+	public static function allowed( string $title, array $f ): bool {
+		$words = array_filter( array_map( 'strval', (array) ( $f['exclude'] ?? array() ) ) );
+		if ( \! $words ) {
+			return true;
+		}
+		$pattern = '/\b(' . implode( '|', array_map( static fn( string $w ): string => preg_quote( $w, '/' ), $words ) ) . ')\b/i';
+		return 1 \!== preg_match( $pattern, $title );
+	}
+
+	/**
+	 * Up to four comparison specs read from the product title (kVA, HP, PSI, litres, phase...).
+	 *
+	 * @return string[]
+	 */
+	public static function specs( string $title ): array {
+		$rules = array(
+			'/(\d+(?:\.\d+)?)\s*kva\b/i'                      => '%s kVA',
+			'/(\d+(?:\.\d+)?)\s*hp\b/i'                       => '%s HP',
+			'/(\d{3,5})\s*psi\b/i'                            => '%s PSI',
+			'/(\d{2,3})\s*bar\b/i'                            => '%s bar',
+			'/(\d{2,4})\s*(?:l|ltr|ltrs|litres?|liters?)\b/i' => '%s litres',
+			'/(\d(?:\.\d+)?)\s*(?:inch|inches|")/i'            => '%s inch',
+			'/(\d{2,3})\s*ah\b/i'                             => '%s Ah',
+			'/(\d{2,3})\s*a(?:mps?)?\b/i'                     => '%s A',
+			'/(\d{3,5})\s*w(?:atts?)?\b/i'                    => '%s W',
+		);
+		$out = array();
+		foreach ( $rules as $re => $fmt ) {
+			if ( preg_match( $re, $title, $m ) ) {
+				$out[] = sprintf( $fmt, $m[1] );
+			}
+		}
+		if ( preg_match( '/three[\s-]*phase|\b3[\s-]*phase/i', $title ) ) {
+			$out[] = 'Three phase';
+		} elseif ( preg_match( '/single[\s-]*phase/i', $title ) ) {
+			$out[] = 'Single phase';
+		}
+		if ( preg_match( '/\bdiesel\b/i', $title ) ) {
+			$out[] = 'Diesel';
+		} elseif ( preg_match( '/\b(petrol|gasoline)\b/i', $title ) ) {
+			$out[] = 'Petrol';
+		}
+		if ( preg_match( '/\b(key|electric)\s*start\b/i', $title ) ) {
+			$out[] = 'Key start';
+		} elseif ( preg_match( '/\b(manual|recoil)\s*start\b/i', $title ) ) {
+			$out[] = 'Manual start';
+		}
+		return array_slice( array_values( array_unique( $out ) ), 0, 4 );
 	}
 
 	/* --------------------------------------------------------------------------
@@ -620,8 +745,14 @@ final class Landing_Funnels {
 		}
 		$def = wp_parse_args(
 			$def,
-			array( 'search' => '', 'benefits' => array(), 'guide' => array(), 'faqs' => array(), 'related' => array(), 'image' => '' )
+			array( 'search' => '', 'benefits' => array(), 'guide' => array(), 'faqs' => array(), 'related' => array(), 'image' => '', 'exclude' => array(), 'sizes' => array(), 'sizes_title' => '' )
 		);
+		$extra = self::extras()[ $main ] ?? array();
+		foreach ( array( 'exclude', 'sizes', 'sizes_title' ) as $k ) {
+			if ( empty( $def[ $k ] ) && \! empty( $extra[ $k ] ) ) {
+				$def[ $k ] = $extra[ $k ];
+			}
+		}
 		if ( ! empty( $ov['headline'] ) ) {
 			$def['headline'] = (string) $ov['headline'];
 		}
@@ -701,7 +832,7 @@ final class Landing_Funnels {
 			self::base_args(
 				$f,
 				array(
-					'posts_per_page' => $limit,
+					'posts_per_page' => $limit * 5,
 					'no_found_rows'  => true,
 					'fields'         => 'ids',
 					'meta_key'       => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery
@@ -710,8 +841,11 @@ final class Landing_Funnels {
 			)
 		);
 		foreach ( $q->posts as $id ) {
+			if ( count( $out ) >= $limit ) {
+				break;
+			}
 			$p = wc_get_product( (int) $id );
-			if ( $p instanceof \WC_Product ) {
+			if ( $p instanceof \WC_Product && self::allowed( $p->get_name(), $f ) ) {
 				$out[] = $p;
 			}
 		}
@@ -723,18 +857,31 @@ final class Landing_Funnels {
 	 *
 	 * @param int[] $exclude Product IDs to skip.
 	 */
-	public static function range( array $f, array $exclude = array() ): \WP_Query {
-		return new \WP_Query(
+	public static function range( array $f, array $exclude = array() ): array {
+		$q   = new \WP_Query(
 			self::base_args(
 				$f,
 				array(
-					'posts_per_page' => self::GRID_LIMIT,
+					'posts_per_page' => self::GRID_LIMIT * 3,
+					'no_found_rows'  => true,
+					'fields'         => 'ids',
 					'post__not_in'   => array_map( 'intval', $exclude ),
 					'meta_key'       => 'total_sales', // phpcs:ignore WordPress.DB.SlowDBQuery
 					'orderby'        => array( 'meta_value_num' => 'DESC', 'date' => 'DESC' ),
 				)
 			)
 		);
+		$out = array();
+		foreach ( $q->posts as $id ) {
+			if ( count( $out ) >= self::GRID_LIMIT ) {
+				break;
+			}
+			$p = wc_get_product( (int) $id );
+			if ( $p instanceof \WC_Product && self::allowed( $p->get_name(), $f ) ) {
+				$out[] = $p;
+			}
+		}
+		return $out;
 	}
 
 	/**
@@ -743,20 +890,25 @@ final class Landing_Funnels {
 	 * @return array{count:int,min:float}
 	 */
 	public static function stats( array $f ): array {
-		$key = 'gxpt_lp_stats_' . md5( $f['key'] . '|' . wp_json_encode( $f['cats'] ) . '|' . $f['search'] . '|' . get_option( 'rk_terms_ver', '1' ) );
+		$key = 'gxpt_lp_stats2_' . md5( $f['key'] . '|' . wp_json_encode( $f['cats'] ) . '|' . $f['search'] . '|' . get_option( 'rk_terms_ver', '1' ) );
 		$hit = get_transient( $key );
 		if ( is_array( $hit ) ) {
 			return $hit;
 		}
 		$q   = new \WP_Query( self::base_args( $f, array( 'posts_per_page' => 300, 'fields' => 'ids', 'no_found_rows' => false ) ) );
 		$min = 0.0;
+		$count = 0;
 		foreach ( $q->posts as $id ) {
+			if ( \! self::allowed( (string) get_the_title( (int) $id ), $f ) ) {
+				continue;
+			}
+			++$count;
 			$price = (float) get_post_meta( (int) $id, '_price', true );
 			if ( $price > 0 && ( 0.0 === $min || $price < $min ) ) {
 				$min = $price;
 			}
 		}
-		$out = array( 'count' => (int) $q->found_posts, 'min' => $min );
+		$out = array( 'count' => $count, 'min' => $min );
 		set_transient( $key, $out, 15 * MINUTE_IN_SECONDS );
 		return $out;
 	}
