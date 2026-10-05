@@ -33,6 +33,8 @@ $gx_products = array_merge( $gx_picks, $gx_range );
 $gx_bands    = Landing_Funnels::bands( array_map( static fn( $p ) => (float) $p->get_price(), $gx_products ) );
 $gx_ksh      = static fn( float $v ): string => 'KSh ' . number_format( $v );
 $gx_first    = 12; // Grid cards shown before "Show more".
+$gx_unit     = (string) ( $gx_f['num'] ?? '' );
+$gx_chooser  = (array) ( $gx_f['chooser'] ?? array() );
 
 /**
  * Inline SVG icon.

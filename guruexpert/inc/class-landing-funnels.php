@@ -570,7 +570,7 @@ final class Landing_Funnels {
 					),
 				),
 				'welding-machines'    => array(
-					'exclude'     => array( 'electrode', 'electrodes', 'rod', 'rods', 'glass', 'helmet', 'glove', 'gloves', 'mask', 'apron', 'goggles' ),
+					'exclude'     => array( 'electrode', 'electrodes', 'rod', 'rods', 'glass', 'helmet', 'glove', 'gloves', 'mask', 'apron', 'goggles', 'inflator', 'gauge' ),
 					'sizes_title' => 'Quick sizing guide',
 					'sizes'       => array(
 						array( 'Light repairs and thin metal', '120 - 160 A' ),
@@ -582,7 +582,7 @@ final class Landing_Funnels {
 				'grinders'            => array( 'exclude' => array( 'disc', 'discs', 'disk', 'cup brush', 'flap' ) ),
 				'pressure-washers'    => array( 'exclude' => array( 'hose', 'nozzle', 'lance', 'foam', 'gun' ) ),
 				'water-pumps'         => array(
-					'exclude'     => array( 'pump control', 'pressure switch', 'float switch', 'pipe', 'hose' ),
+					'exclude'     => array( 'pump control', 'pressure switch', 'float switch', 'pipe', 'hose', 'washer', 'car wash' ),
 					'sizes_title' => 'Quick sizing guide',
 					'sizes'       => array(
 						array( 'Garden watering and tank filling', '1 - 2 inch' ),
@@ -613,7 +613,10 @@ final class Landing_Funnels {
 				'solar-panels'        => array( 'exclude' => array( 'bracket', 'mount', 'mounting', 'cable', 'connector' ) ),
 				'demolition-breakers' => array( 'exclude' => array( 'chisel', 'chisels' ) ),
 				'vacuum-cleaners'     => array( 'exclude' => array( 'filter bag', 'dust bag' ) ),
-				'engines'             => array( 'exclude' => array( 'with', 'cutter', 'chopper', 'trowel', 'pump', 'tractor', 'mill', 'vibrator', 'sprayer', 'generator', 'washer' ) ),
+				'engines'             => array(
+					'require' => array( 'engine' ),
+					'exclude' => array( 'with', 'cutter', 'chopper', 'trowel', 'pump', 'tractor', 'mill', 'vibrator', 'sprayer', 'generator', 'washer', 'mower', 'auger' ),
+				),
 			)
 		);
 	}
@@ -622,6 +625,13 @@ final class Landing_Funnels {
 	 * Whether a product title passes the funnel's accessory exclusions.
 	 */
 	public static function allowed( string $title, array $f ): bool {
+		$need = array_filter( array_map( 'strval', (array) ( $f['require'] ?? array() ) ) );
+		if ( $need ) {
+			$re = '/\b(' . implode( '|', array_map( static fn( string $w ): string => preg_quote( $w, '/' ), $need ) ) . ')\b/i';
+			if ( 1 !== preg_match( $re, $title ) ) {
+				return false;
+			}
+		}
 		$words = array_filter( array_map( 'strval', (array) ( $f['exclude'] ?? array() ) ) );
 		if ( ! $words ) {
 			return true;
@@ -865,10 +875,10 @@ final class Landing_Funnels {
 		}
 		$def = wp_parse_args(
 			$def,
-			array( 'search' => '', 'benefits' => array(), 'guide' => array(), 'faqs' => array(), 'related' => array(), 'image' => '', 'exclude' => array(), 'sizes' => array(), 'sizes_title' => '' )
+			array( 'search' => '', 'benefits' => array(), 'guide' => array(), 'faqs' => array(), 'related' => array(), 'image' => '', 'exclude' => array(), 'require' => array(), 'sizes' => array(), 'sizes_title' => '', 'sizes_head' => array(), 'sizes_note' => '', 'chooser' => array(), 'num' => '' )
 		);
-		$extra = self::extras()[ $main ] ?? array();
-		foreach ( array( 'exclude', 'sizes', 'sizes_title' ) as $k ) {
+		$extra = array_merge( self::extras()[ $main ] ?? array(), self::ux()[ $main ] ?? array() );
+		foreach ( array( 'exclude', 'require', 'sizes', 'sizes_title', 'sizes_head', 'sizes_note', 'chooser', 'num' ) as $k ) {
 			if ( empty( $def[ $k ] ) && ! empty( $extra[ $k ] ) ) {
 				$def[ $k ] = $extra[ $k ];
 			}
