@@ -592,7 +592,7 @@ final class Landing_Funnels {
 					),
 				),
 				'air-compressors'     => array(
-					'exclude'     => array( 'hose', 'coupler', 'fitting', 'spray gun', 'blow gun' ),
+					'exclude'     => array( 'hose', 'coupler', 'fitting', 'spray gun', 'blow gun', 'inflator', 'sprayer', 'paint' ),
 					'sizes_title' => 'Quick sizing guide',
 					'sizes'       => array(
 						array( 'Tyre inflation and blowing dust', '25 - 50 litres' ),
@@ -638,6 +638,10 @@ final class Landing_Funnels {
 	public static function specs( string $title ): array {
 		$rules = array(
 			'/(\d+(?:\.\d+)?)\s*kva\b/i'                      => '%s kVA',
+			'/(\d+(?:\.\d+)?)\s*kw\b/i'                       => '%s kW',
+			'/(?:head|lift)\s*:?\s*(\d{1,3})\s*m\b/i'         => '%sm head',
+			'/(\d{1,3})\s*m(?:etres?|eters?)?\s*(?:head|lift)\b/i' => '%sm head',
+			'/(\d{2,4})\s*l\s*\/\s*min\b/i'                   => '%s L/min',
 			'/(\d+(?:\.\d+)?)\s*hp\b/i'                       => '%s HP',
 			'/(\d{3,5})\s*psi\b/i'                            => '%s PSI',
 			'/(\d{2,3})\s*bar\b/i'                            => '%s bar',
@@ -648,7 +652,11 @@ final class Landing_Funnels {
 			'/(\d{3,5})\s*w(?:atts?)?\b/i'                    => '%s W',
 		);
 		$out = array();
+		$has_power = 1 === preg_match( '/\d\s*(kva|kw)\b/i', $title );
 		foreach ( $rules as $re => $fmt ) {
+			if ( '%s litres' === $fmt && $has_power ) {
+				continue; // On generators "15L" is the fuel tank, not the headline spec.
+			}
 			if ( preg_match( $re, $title, $m ) ) {
 				$out[] = sprintf( $fmt, $m[1] );
 			}
@@ -669,6 +677,118 @@ final class Landing_Funnels {
 			$out[] = 'Manual start';
 		}
 		return array_slice( array_values( array_unique( $out ) ), 0, 4 );
+	}
+
+	/**
+	 * Funnel UX settings: the "What do you need it for?" chooser, the number each card is
+	 * compared on (data-num), and sizing-table labels.
+	 *
+	 * chooser options: label, desc, and either a numeric range on "num" (min inclusive,
+	 * max exclusive, 0 = open) or a "tag" that must appear in the product title.
+	 *
+	 * @return array<string,array<string,mixed>>
+	 */
+	private static function ux(): array {
+		$run  = array( 'If you need to run', 'Look at' );
+		$job  = array( 'Job', 'Look at' );
+		$moto = 'Typical figures only. Motors need extra power to start, so send us your appliance list for an exact recommendation.';
+		return (array) apply_filters(
+			'guruexpertpowertools_funnel_ux',
+			array(
+				'generators'       => array(
+					'num'        => 'kva',
+					'sizes_head' => $run,
+					'sizes_note' => $moto,
+					'chooser'    => array(
+						array( 'label' => 'Home backup', 'desc' => 'Lights, TV, fridge, small pump', 'min' => 0, 'max' => 5.1 ),
+						array( 'label' => 'Shop or office', 'desc' => 'Several appliances at once', 'min' => 5.1, 'max' => 8 ),
+						array( 'label' => 'Site and heavy loads', 'desc' => 'Welders, borehole pumps, machines', 'min' => 8, 'max' => 0 ),
+						array( 'label' => 'Long running hours', 'desc' => 'Economical diesel models', 'tag' => 'diesel' ),
+					),
+				),
+				'solar-inverters'  => array(
+					'num'        => 'kva',
+					'sizes_head' => $run,
+					'sizes_note' => $moto,
+					'chooser'    => array(
+						array( 'label' => 'Small home', 'desc' => 'Lights, TV, phones, laptop', 'min' => 0, 'max' => 2.1 ),
+						array( 'label' => 'Family home', 'desc' => 'Add a fridge and small appliances', 'min' => 2.1, 'max' => 5.1 ),
+						array( 'label' => 'Business or large home', 'desc' => 'Pumps, irons, many appliances', 'min' => 5.1, 'max' => 0 ),
+					),
+				),
+				'water-pumps'      => array(
+					'sizes_head' => $job,
+					'sizes_note' => 'Typical figures only. Send us your water source, lift and pipe distance for an exact recommendation.',
+					'chooser'    => array(
+						array( 'label' => 'Irrigation and transfer', 'desc' => 'Petrol pumps for farms and tanks', 'tag' => 'petrol' ),
+						array( 'label' => 'Boost building pressure', 'desc' => 'Upper floors, showers, taps', 'tag' => 'booster' ),
+						array( 'label' => 'Borehole or deep well', 'desc' => 'Submersible pumps', 'tag' => 'submersible' ),
+						array( 'label' => 'Solar powered', 'desc' => 'Pump without grid power', 'tag' => 'solar' ),
+					),
+				),
+				'air-compressors'  => array(
+					'num'        => 'litres',
+					'sizes_head' => array( 'Job', 'Tank size' ),
+					'sizes_note' => 'Typical figures only. Tell us the tools you run for an exact recommendation.',
+					'chooser'    => array(
+						array( 'label' => 'Tyres and light jobs', 'desc' => 'Up to 50 litres', 'min' => 0, 'max' => 51 ),
+						array( 'label' => 'Spray painting and garage', 'desc' => '51 to 150 litres', 'min' => 51, 'max' => 151 ),
+						array( 'label' => 'Workshop and industrial', 'desc' => 'Above 150 litres', 'min' => 151, 'max' => 0 ),
+					),
+				),
+				'welding-machines' => array(
+					'num'        => 'a',
+					'sizes_head' => $job,
+					'sizes_note' => 'Typical figures only. Tell us the metal thickness and electrodes you use for an exact recommendation.',
+					'chooser'    => array(
+						array( 'label' => 'Light repairs', 'desc' => 'Up to 180A', 'min' => 0, 'max' => 181 ),
+						array( 'label' => 'Gates and fabrication', 'desc' => '181A to 250A', 'min' => 181, 'max' => 251 ),
+						array( 'label' => 'Heavy duty', 'desc' => 'Above 250A', 'min' => 251, 'max' => 0 ),
+						array( 'label' => 'No power on site', 'desc' => 'Diesel welder-generators', 'tag' => 'generator' ),
+					),
+				),
+				'pressure-washers' => array(
+					'num'     => 'psi',
+					'chooser' => array(
+						array( 'label' => 'Home and car', 'desc' => 'Up to 2,500 PSI', 'min' => 0, 'max' => 2501 ),
+						array( 'label' => 'Car wash business', 'desc' => 'Above 2,500 PSI', 'min' => 2501, 'max' => 0 ),
+						array( 'label' => 'No power on site', 'desc' => 'Petrol models', 'tag' => 'petrol' ),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * Numeric comparison value read from a title, in the funnel's unit (0 when unknown).
+	 */
+	public static function num( string $title, string $unit ): float {
+		$m = array();
+		if ( 'kva' === $unit ) {
+			if ( preg_match( '/(\d+(?:\.\d+)?)\s*kva\b/i', $title, $m ) ) {
+				return (float) $m[1];
+			}
+			if ( preg_match( '/(\d+(?:\.\d+)?)\s*kw\b/i', $title, $m ) ) {
+				return round( (float) $m[1] / 0.8, 1 );
+			}
+			if ( preg_match( '/(\d{3,5})\s*w(?:atts?)?\b/i', $title, $m ) ) {
+				return round( (float) $m[1] / 800, 1 );
+			}
+			return 0.0;
+		}
+		$res = array(
+			'hp'     => '/(\d+(?:\.\d+)?)\s*hp\b/i',
+			'litres' => '/(\d{2,4})\s*(?:l|ltr|ltrs|litres?|liters?)\b/i',
+			'a'      => '/(\d{2,3})\s*a(?:mps?)?\b/i',
+			'psi'    => '/(\d{3,5})\s*psi\b/i',
+		);
+		if ( isset( $res[ $unit ] ) && preg_match( $res[ $unit ], $title, $m ) ) {
+			return (float) $m[1];
+		}
+		if ( 'psi' === $unit && preg_match( '/(\d{2,3})\s*bar\b/i', $title, $m ) ) {
+			return round( (float) $m[1] * 14.5 );
+		}
+		return 0.0;
 	}
 
 	/* --------------------------------------------------------------------------

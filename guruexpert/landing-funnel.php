@@ -54,7 +54,8 @@ $gx_icon = static function ( string $name ): string {
 /**
  * Funnel product card.
  */
-$gx_card = static function ( WC_Product $p, bool $pick = false, bool $hidden = false ): void {
+$gx_card = static function ( WC_Product $p, bool $pick = false, bool $hidden = false ) use ( $gx_unit ): void {
+	$num = '' !== $gx_unit ? Landing_Funnels::num( $p->get_name(), $gx_unit ) : 0.0;
 	$brand = '';
 	$terms = get_the_terms( $p->get_id(), 'product_brand' );
 	if ( is_array( $terms ) && $terms ) {
@@ -62,7 +63,7 @@ $gx_card = static function ( WC_Product $p, bool $pick = false, bool $hidden = f
 	}
 	$specs = Landing_Funnels::specs( $p->get_name() );
 	?>
-	<li class="gx-lp-card<?php echo $pick ? ' gx-lp-card--pick' : ''; ?>" data-price="<?php echo esc_attr( (string) (float) $p->get_price() ); ?>"<?php echo $hidden ? ' data-gx-more hidden' : ''; ?>>
+	<li class="gx-lp-card<?php echo $pick ? ' gx-lp-card--pick' : ''; ?>" data-price="<?php echo esc_attr( (string) (float) $p->get_price() ); ?>" data-num="<?php echo esc_attr( (string) $num ); ?>" data-title="<?php echo esc_attr( strtolower( $p->get_name() ) ); ?>"<?php echo $hidden ? ' data-gx-more hidden' : ''; ?>>
 		<a class="gx-lp-card__media" href="<?php echo esc_url( $p->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
 			<?php echo $p->get_image( 'woocommerce_thumbnail', array( 'loading' => 'lazy', 'decoding' => 'async', 'alt' => '' ) ); // phpcs:ignore ?>
 			<?php if ( $p->is_on_sale() ) : ?><span class="gx-lp-card__flag"><?php esc_html_e( 'Offer', 'guruexpertpowertools' ); ?></span><?php endif; ?>
@@ -144,6 +145,26 @@ get_header();
 		</div>
 	</nav>
 
+	<?php if ( $gx_chooser && $gx_products ) : ?>
+		<section class="gx-lp-chooser" aria-labelledby="gx-lp-chooser-title">
+			<div class="container">
+				<div class="gx-lp-chooser__head">
+					<h2 id="gx-lp-chooser-title"><?php esc_html_e( 'What do you need it for?', 'guruexpertpowertools' ); ?></h2>
+					<p><?php esc_html_e( 'Pick one and we will show the models that fit.', 'guruexpertpowertools' ); ?></p>
+				</div>
+				<div class="gx-lp-chooser__grid">
+					<?php foreach ( $gx_chooser as $gx_c ) : ?>
+						<button type="button" class="gx-lp-use" data-gx-use data-label="<?php echo esc_attr( (string) $gx_c['label'] ); ?>" data-min="<?php echo esc_attr( (string) ( $gx_c['min'] ?? 0 ) ); ?>" data-max="<?php echo esc_attr( (string) ( $gx_c['max'] ?? 0 ) ); ?>" data-tag="<?php echo esc_attr( strtolower( (string) ( $gx_c['tag'] ?? '' ) ) ); ?>">
+							<strong><?php echo esc_html( (string) $gx_c['label'] ); ?></strong>
+							<span><?php echo esc_html( (string) $gx_c['desc'] ); ?></span>
+							<em aria-hidden="true">&rarr;</em>
+						</button>
+					<?php endforeach; ?>
+				</div>
+			</div>
+		</section>
+	<?php endif; ?>
+
 	<?php if ( $gx_picks ) : ?>
 		<section class="gx-lp-section gx-lp-picks">
 			<div class="container">
@@ -186,6 +207,10 @@ get_header();
 				<?php endif; ?>
 			</div>
 			<?php if ( $gx_products ) : ?>
+				<div class="gx-lp-active" data-gx-active hidden>
+					<span><?php esc_html_e( 'Showing models for:', 'guruexpertpowertools' ); ?> <strong data-gx-active-label></strong></span>
+					<button type="button" data-gx-use-clear><?php esc_html_e( 'Show all', 'guruexpertpowertools' ); ?> &times;</button>
+				</div>
 				<ul class="gx-lp-grid" data-gx-filter-target>
 					<?php
 					foreach ( $gx_products as $gx_i => $gx_p ) {
@@ -195,6 +220,7 @@ get_header();
 				</ul>
 				<p class="gx-lp-empty-filter" hidden><?php esc_html_e( 'No models in this price range. Try another filter or ask us on WhatsApp.', 'guruexpertpowertools' ); ?></p>
 				<div class="gx-lp-more">
+					<p class="gx-lp-count" data-gx-count data-total="<?php echo esc_attr( (string) max( $gx_stats['count'], count( $gx_products ) ) ); ?>"><?php echo esc_html( sprintf( __( 'Showing %1$d of %2$d models', 'guruexpertpowertools' ), min( $gx_first, count( $gx_products ) ), max( $gx_stats['count'], count( $gx_products ) ) ) ); ?></p>
 					<?php if ( count( $gx_products ) > $gx_first ) : ?>
 						<button type="button" class="gx-lp-btn gx-lp-btn--outline" data-gx-show-more><?php echo esc_html( sprintf( __( 'Show %d more', 'guruexpertpowertools' ), count( $gx_products ) - $gx_first ) ); ?></button>
 					<?php endif; ?>
@@ -223,14 +249,15 @@ get_header();
 						<div class="gx-lp-sizes">
 							<h3><?php echo esc_html( (string) ( $gx_f['sizes_title'] ?: __( 'Quick sizing guide', 'guruexpertpowertools' ) ) ); ?></h3>
 							<table>
-								<thead><tr><th scope="col"><?php esc_html_e( 'If you need to run', 'guruexpertpowertools' ); ?></th><th scope="col"><?php esc_html_e( 'Look at', 'guruexpertpowertools' ); ?></th></tr></thead>
+								<?php $gx_sh = (array) ( $gx_f['sizes_head'] ?: array( __( 'Job', 'guruexpertpowertools' ), __( 'Look at', 'guruexpertpowertools' ) ) ); ?>
+								<thead><tr><th scope="col"><?php echo esc_html( (string) $gx_sh[0] ); ?></th><th scope="col"><?php echo esc_html( (string) $gx_sh[1] ); ?></th></tr></thead>
 								<tbody>
 									<?php foreach ( (array) $gx_f['sizes'] as $gx_row ) : ?>
 										<tr><td><?php echo esc_html( (string) $gx_row[0] ); ?></td><td><?php echo esc_html( (string) $gx_row[1] ); ?></td></tr>
 									<?php endforeach; ?>
 								</tbody>
 							</table>
-							<p class="gx-lp-sizes__note"><?php esc_html_e( 'Typical figures only. Motors need extra power to start, so send us your list for an exact recommendation.', 'guruexpertpowertools' ); ?></p>
+							<p class="gx-lp-sizes__note"><?php echo esc_html( (string) ( $gx_f['sizes_note'] ?: __( 'Typical figures only. Send us your details for an exact recommendation.', 'guruexpertpowertools' ) ) ); ?></p>
 						</div>
 					<?php endif; ?>
 					<?php if ( $gx_wa_ask ) : ?><a class="gx-lp-btn gx-lp-btn--wa" href="<?php echo esc_url( $gx_wa_ask ); ?>" target="_blank" rel="noopener nofollow"><?php esc_html_e( 'Get a recommendation', 'guruexpertpowertools' ); ?></a><?php endif; ?>
@@ -313,19 +340,29 @@ get_header();
 		</div>
 	</section>
 
-	<section class="gx-lp-visit">
-		<div class="container gx-lp-visit__inner">
-			<div class="gx-lp-visit__copy">
-				<h2><?php esc_html_e( 'Prefer to see it first? Visit us.', 'guruexpertpowertools' ); ?></h2>
+	<section class="gx-lp-close">
+		<div class="container gx-lp-close__inner">
+			<div class="gx-lp-close__copy">
+				<p class="gx-lp-eyebrow"><?php esc_html_e( 'Ready when you are', 'guruexpertpowertools' ); ?></p>
+				<h2><?php echo esc_html( sprintf( __( 'Get the right %s, delivered to your door', 'guruexpertpowertools' ), $gx_name_lc ) ); ?></h2>
+				<ul class="gx-lp-close__points">
+					<li><?php echo $gx_icon( 'check' ); // phpcs:ignore ?><?php esc_html_e( 'Advice from our team before you pay', 'guruexpertpowertools' ); ?></li>
+					<li><?php echo $gx_icon( 'check' ); // phpcs:ignore ?><?php esc_html_e( 'KSh 500 flat delivery countrywide', 'guruexpertpowertools' ); ?></li>
+					<li><?php echo $gx_icon( 'check' ); // phpcs:ignore ?><?php esc_html_e( 'M-PESA, or cash on delivery in Nairobi', 'guruexpertpowertools' ); ?></li>
+				</ul>
+				<div class="gx-lp-close__ctas">
+					<a class="gx-lp-btn gx-lp-btn--accent gx-lp-btn--lg" href="#gx-lp-range"><?php esc_html_e( 'See models & prices', 'guruexpertpowertools' ); ?></a>
+					<?php if ( $gx_wa_ask ) : ?><a class="gx-lp-btn gx-lp-btn--wa gx-lp-btn--lg" href="<?php echo esc_url( $gx_wa_ask ); ?>" target="_blank" rel="noopener nofollow"><?php esc_html_e( 'Chat on WhatsApp', 'guruexpertpowertools' ); ?></a><?php endif; ?>
+					<a class="gx-lp-btn gx-lp-btn--ghost gx-lp-btn--lg" href="<?php echo esc_url( 'tel:' . $gx_store['phone_tel'] ); ?>"><?php echo $gx_icon( 'phone' ); // phpcs:ignore ?><?php echo esc_html( $gx_store['phone'] ); ?></a>
+				</div>
+			</div>
+			<div class="gx-lp-close__visit">
+				<h3><?php esc_html_e( 'Prefer to see it first?', 'guruexpertpowertools' ); ?></h3>
 				<ul>
 					<li><?php echo $gx_icon( 'pin' ); // phpcs:ignore ?><span><?php echo esc_html( $gx_store['address'] ); ?></span></li>
 					<li><?php echo $gx_icon( 'clock' ); // phpcs:ignore ?><span><?php echo esc_html( $gx_store['hours'] ); ?></span></li>
-					<li><?php echo $gx_icon( 'phone' ); // phpcs:ignore ?><span><a href="<?php echo esc_url( 'tel:' . $gx_store['phone_tel'] ); ?>"><?php echo esc_html( $gx_store['phone'] ); ?></a></span></li>
 				</ul>
-			</div>
-			<div class="gx-lp-visit__ctas">
-				<a class="gx-lp-btn gx-lp-btn--accent gx-lp-btn--lg" href="<?php echo esc_url( 'tel:' . $gx_store['phone_tel'] ); ?>"><?php esc_html_e( 'Call now', 'guruexpertpowertools' ); ?></a>
-				<a class="gx-lp-btn gx-lp-btn--ghost gx-lp-btn--lg" href="<?php echo esc_url( $gx_store['map'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get directions', 'guruexpertpowertools' ); ?></a>
+				<a class="gx-lp-link gx-lp-link--light" href="<?php echo esc_url( $gx_store['map'] ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get directions', 'guruexpertpowertools' ); ?> &rarr;</a>
 			</div>
 		</div>
 	</section>

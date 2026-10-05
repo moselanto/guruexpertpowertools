@@ -1,4 +1,4 @@
-/* Guru Expert Power Tools - category sales funnels v2: price filters, show more, WhatsApp quick order, jump nav, sticky bar. */
+/* Guru Expert Power Tools - category sales funnels v3: use-case chooser, price filters, show more, WhatsApp quick order, jump nav, sticky bar. */
 (() => {
   'use strict';
   const root = document.querySelector('.gx-lp');
@@ -8,26 +8,63 @@
   const wa = (root.getAttribute('data-gx-wa') || '').replace(/[^0-9]/g, '');
   const pageUrl = root.getAttribute('data-gx-page') || window.location.href;
 
-  /* Grid: price-band filter + "Show more" */
+  /* Keep the in-page menu and anchor targets below the theme's sticky header. */
+  const headerEl = () => {
+    const cands = $$('header, .rk-header, .site-header, #wpadminbar');
+    let h = 0;
+    cands.forEach((el) => {
+      const cs = window.getComputedStyle(el);
+      if ((cs.position === 'fixed' || cs.position === 'sticky') && el.getBoundingClientRect().top <= 1) {
+        h = Math.max(h, el.getBoundingClientRect().bottom);
+      }
+    });
+    return h;
+  };
+  const setHead = () => { root.style.setProperty('--gx-head', Math.max(0, Math.round(headerEl())) + 'px'); };
+  setHead();
+  let raf = 0;
+  window.addEventListener('scroll', () => { if (raf) return; raf = window.requestAnimationFrame(() => { raf = 0; setHead(); }); }, { passive: true });
+  window.addEventListener('resize', setHead);
+
+  /* Grid state: use-case chooser + price band + "Show more". */
   const grid = $('[data-gx-filter-target]', root);
   const emptyMsg = $('.gx-lp-empty-filter', root);
   const moreBtn = $('[data-gx-show-more]', root);
+  const countEl = $('[data-gx-count]', root);
+  const activeBox = $('[data-gx-active]', root);
+  const activeLabel = $('[data-gx-active-label]', root);
+  const total = countEl ? parseInt(countEl.dataset.total || '0', 10) : 0;
   let expanded = false;
   let band = { min: 0, max: 0 };
+  let use = null;
+
+  const inRange = (v, min, max) => v >= min && (max === 0 || v < max);
   const applyGrid = () => {
     if (!grid) return;
-    const filtering = band.min > 0 || band.max > 0;
+    const filtering = band.min > 0 || band.max > 0 || use !== null;
     let shown = 0;
     $$('.gx-lp-card', grid).forEach((card) => {
-      const p = parseFloat(card.dataset.price || '0');
-      const inBand = p >= band.min && (band.max === 0 || p < band.max);
+      const price = parseFloat(card.dataset.price || '0');
+      let ok = inRange(price, band.min, band.max);
+      if (ok && use) {
+        if (use.tag) {
+          ok = (card.dataset.title || '').indexOf(use.tag) > -1;
+        } else {
+          const n = parseFloat(card.dataset.num || '0');
+          ok = n > 0 && inRange(n, use.min, use.max);
+        }
+      }
       const collapsed = card.hasAttribute('data-gx-more') && !expanded && !filtering;
-      card.hidden = !inBand || collapsed;
+      card.hidden = !ok || collapsed;
       if (!card.hidden) shown++;
     });
     if (emptyMsg) emptyMsg.hidden = shown > 0;
     if (moreBtn) moreBtn.hidden = expanded || filtering;
+    if (countEl) countEl.textContent = 'Showing ' + shown + ' of ' + (filtering ? $$('.gx-lp-card', grid).length + ' models on this page' : total + ' models');
+    if (activeBox) activeBox.hidden = use === null;
+    if (activeLabel && use) activeLabel.textContent = use.label;
   };
+
   $$('.gx-lp-chip', root).forEach((chip) => {
     chip.addEventListener('click', () => {
       band = { min: parseFloat(chip.dataset.min || '0'), max: parseFloat(chip.dataset.max || '0') };
@@ -39,6 +76,37 @@
       applyGrid();
     });
   });
+
+  const useBtns = $$('[data-gx-use]', root);
+  useBtns.forEach((btn) => {
+    btn.setAttribute('aria-pressed', 'false');
+    btn.addEventListener('click', () => {
+      const same = use && use.label === btn.dataset.label;
+      use = same ? null : {
+        label: btn.dataset.label || '',
+        min: parseFloat(btn.dataset.min || '0'),
+        max: parseFloat(btn.dataset.max || '0'),
+        tag: (btn.dataset.tag || '').trim(),
+      };
+      useBtns.forEach((b) => {
+        const on = use !== null && b === btn;
+        b.classList.toggle('is-active', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      applyGrid();
+      const range = document.getElementById('gx-lp-range');
+      if (use && range) range.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  const clearUse = $('[data-gx-use-clear]', root);
+  if (clearUse) {
+    clearUse.addEventListener('click', () => {
+      use = null;
+      useBtns.forEach((b) => { b.classList.remove('is-active'); b.setAttribute('aria-pressed', 'false'); });
+      applyGrid();
+    });
+  }
+
   if (moreBtn) {
     moreBtn.addEventListener('click', () => {
       const firstHidden = grid ? grid.querySelector('[data-gx-more]') : null;
