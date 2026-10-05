@@ -143,7 +143,7 @@ flowchart TB
     subgraph WP["WordPress - guruexpertpowertools.co.ke"]
         T[Guru Expert Power Tools theme]
         W[WebP Optimizer plugin]
-        WC[(WooCommerce<br/>~760 products, orders)]
+        WC[(WooCommerce<br/>800+ products, orders)]
         PB[Perfect Brands]
         T --> WC
         PB --> WC
