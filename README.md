@@ -1,8 +1,8 @@
 # Guru Expert Power Tools
 
-Source code for **[guruexpertpowertools.co.ke](https://guruexpertpowertools.co.ke/)** and
-**[powertoolsplugke.co.ke](https://www.powertoolsplugke.co.ke/)** — Kenyan e-commerce stores
-selling power tools, solar equipment, and hardware, built on WordPress and WooCommerce.
+Source code for **[guruexpertpowertools.co.ke](https://guruexpertpowertools.co.ke/)** — a Kenyan
+e-commerce store selling power tools, solar equipment, and hardware, built on WordPress and
+WooCommerce.
 
 This repository holds the two custom pieces of that site: the storefront theme and a WebP image
 optimizer plugin. Everything else (WordPress core, WooCommerce, third-party plugins) is installed
@@ -10,9 +10,9 @@ normally and is not tracked here.
 
 | | |
 |---|---|
-| **Live sites** | https://guruexpertpowertools.co.ke/ · https://www.powertoolsplugke.co.ke/ |
+| **Live site** | https://guruexpertpowertools.co.ke/ |
 | **Stack** | WordPress 6.5+, WooCommerce 9+, PHP 8.1+ (tested to 8.3) |
-| **Theme version** | 1.26.0 |
+| **Theme version** | 1.24.x |
 | **Catalogue size** | ~845 products |
 | **License** | GPL v2 or later |
 
@@ -26,7 +26,6 @@ guruexpert/             The Guru Expert Power Tools WooCommerce theme
   inc/                  Namespaced PHP classes (GuruExpertPowerTools\)
   template-parts/       Reusable template partials
   woocommerce/          WooCommerce template overrides
-  landing-funnel.php    Category landing funnel template (/lp-{category}/)
   demo/                 Demo import content
   languages/            Translation files (.pot)
   README.md             Theme documentation and install guide
@@ -50,8 +49,6 @@ Highlights:
   debounced AJAX search across products, categories, brands, and SKUs.
 - **Homepage** (`front-page.php`): hero slider with touch/keyboard/autoplay support, "Shop by
   Category" cards with live product counts, and one product row per category.
-- **Category landing funnels** (`/lp-{category}/`): ad-ready landing pages with a hero, product
-  grid, trust band and WhatsApp CTA. See [Landing funnels](#landing-funnels-lp-category) below.
 - **Uniform product cards**: 1:1 lazy-loaded images, clamped titles and descriptions, sale/stock/
   featured badges, star ratings, AJAX add-to-cart, and an "Order on WhatsApp" button.
 - **Performance**: WebP image pipeline, deferred non-critical JS, inlined critical CSS, deferred
@@ -71,70 +68,6 @@ Highlights:
 
 Not yet implemented: quick view, wishlist, compare, and the advanced AJAX filter sidebar. See
 [`guruexpert/ROADMAP.md`](guruexpert/ROADMAP.md).
-
-## Landing funnels (`/lp-{category}/`)
-
-Added in theme **1.26.0** (`inc/class-landing-funnels.php` + `landing-funnel.php`).
-
-**The problem it fixes:** ad/campaign URLs such as `/lp-water-pumps/` returned a 404 /
-"Nothing found" page. The theme had no code for these URLs, so they only worked if a published
-WordPress page with that exact slug existed — and even then the page showed only its typed text,
-no products.
-
-**How it works now:**
-
-1. Any URL of the form `/lp-{slug}/` is handled by the theme — no WordPress page, rewrite rule
-   or permalink flush is required.
-2. `{slug}` is matched to a WooCommerce product category: exact slug → known aliases →
-   singular/plural → category-name match. Child categories are included.
-3. If no category matches, the funnel falls back to a product keyword search, so it is never
-   empty while matching products exist.
-4. If a **published** page with the `lp-` slug exists (e.g. you edited the funnel in WP admin),
-   its title and content are used as the funnel headline and intro. Otherwise the headline comes
-   from the category name and the intro from the category description.
-5. The page renders: hero (headline, intro, product count, Shop now + Ask on WhatsApp buttons,
-   category image), up to 24 products using the standard product card, a "View all" link to the
-   full category, the trust band and the call-to-action band. Products hidden from the catalogue
-   (and out-of-stock items, if WooCommerce hides them) are excluded.
-
-**Active funnels:**
-
-| Funnel URL | Category |
-|---|---|
-| https://www.powertoolsplugke.co.ke/lp-incubators/ | Incubators |
-| https://www.powertoolsplugke.co.ke/lp-demolition-breakers/ | Demolition Breakers |
-| https://www.powertoolsplugke.co.ke/lp-vacuum-cleaners/ | Vacuum Cleaners |
-| https://www.powertoolsplugke.co.ke/lp-pressure-washers/ | Pressure Washers |
-| https://www.powertoolsplugke.co.ke/lp-water-pumps/ | Water Pumps |
-| https://www.powertoolsplugke.co.ke/lp-hardware-tools/ | Hardware Tools |
-| https://www.powertoolsplugke.co.ke/lp-weighing-scales/ | Weighing Scales |
-| https://www.powertoolsplugke.co.ke/lp-batteries/ | Batteries |
-| https://www.powertoolsplugke.co.ke/lp-welding-machines/ | Welding Machines |
-| https://www.powertoolsplugke.co.ke/lp-solar-panels/ | Solar Panels |
-| https://www.powertoolsplugke.co.ke/lp-solar-inverters/ | Solar Inverters |
-| https://www.powertoolsplugke.co.ke/lp-grinders/ | Grinders |
-
-**Adding a funnel:** just use a new `/lp-{category-slug}/` URL. If the category slug differs from
-the URL you want, add an alias with the `guruexpertpowertools_funnel_aliases` filter (child theme):
-
-```php
-add_filter( 'guruexpertpowertools_funnel_aliases', function ( $map ) {
-	$map['angle-grinders'] = array( 'grinders' );
-	return $map;
-} );
-```
-
-**If a funnel still shows "Nothing found" after upload:**
-
-- Confirm the updated `guruexpert/` theme was uploaded (GitHub does not auto-deploy) and clear
-  any page/server cache.
-- Check that the matching category has published, visible products.
-- Check for a **draft or trashed** page with the same `lp-` slug, or a redirect in Rank Math /
-  Redirection pointing the URL elsewhere — delete or publish it.
-
-> Merchant Center note: incubators and weighing scales are off-category ranges excluded from the
-> Google product feed for the misrepresentation appeal. Funnel pages don't affect the feed, but
-> avoid pointing Google Shopping/PMax ads at those two funnels until the appeal is resolved.
 
 ## The plugin (`guruexpert-webp/`)
 
@@ -176,13 +109,6 @@ business policy changes:
 - **Cash on Delivery:** Nairobi only. Orders outside Nairobi are paid before dispatch.
 - **Returns:** 7 days.
 - **Warranty:** manufacturer warranty (not a store-issued warranty).
-
-## Changelog
-
-- **1.26.0** — Category landing funnels at `/lp-{category}/` (fixes 404 / "Nothing found" on all
-  12 funnel URLs).
-- **1.25.x** — Merchant Center misrepresentation fixes, login hardening, off-category ranges hidden
-  from the homepage category row.
 
 ## Contributing and conventions
 
