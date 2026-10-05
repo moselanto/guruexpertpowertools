@@ -75,6 +75,12 @@ $guruexpertpowertools_modules = array(
 	 * tags inside GTM -- that doubles every hit and corrupts Performance Max bidding.
 	 */
 	'GuruExpertPowerTools\\Tag_Manager',
+	/*
+	 * Category landing funnels at /lp-{category}/ (e.g. /lp-water-pumps/). Resolves the
+	 * slug to a product category and renders landing-funnel.php instead of a 404
+	 * "Nothing found". The autoloader maps Landing_Funnels to inc/class-landing-funnels.php.
+	 */
+	'GuruExpertPowerTools\\Landing_Funnels',
 );
 
 foreach ( $guruexpertpowertools_modules as $guruexpertpowertools_class ) {
