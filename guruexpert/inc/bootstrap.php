@@ -75,6 +75,14 @@ $guruexpertpowertools_modules = array(
 	 * tags inside GTM -- that doubles every hit and corrupts Performance Max bidding.
 	 */
 	'GuruExpertPowerTools\\Tag_Manager',
+	/*
+	 * Category sales funnels at /lp-{funnel}/ (generators, water pumps, pressure washers,
+	 * etc.). Serves landing-funnel.php with a 200 status, no WP pages or rewrite flush
+	 * needed. Popular-pick product IDs, headlines and on/off are set in
+	 * WooCommerce > Sales Funnels. The autoloader maps Landing_Funnels to
+	 * inc/class-landing-funnels.php.
+	 */
+	'GuruExpertPowerTools\\Landing_Funnels',
 );
 
 foreach ( $guruexpertpowertools_modules as $guruexpertpowertools_class ) {

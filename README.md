@@ -123,6 +123,61 @@ This repository holds the two custom parts of the live store. WordPress core, Wo
 | `Whatsapp_Tracking` | Reports WhatsApp order clicks to Google Ads as a secondary conversion |
 | `Analytics` | GA4 tag, placed after the consent defaults |
 | `Tag_Manager` | GTM container, placed after the consent defaults and GA4 |
+| `Landing_Funnels` | Category sales funnels at `/lp-{funnel}/`, with admin control under *WooCommerce > Sales Funnels* |
+
+### Sales funnels (`/lp-{funnel}/`)
+Landing pages for ad and social traffic. Each one is served with a 200 status, so you don't need a WordPress page, a rewrite rule or a permalink flush. Prices, stock and images always come live from WooCommerce.
+
+| URL | Range |
+| --- | --- |
+| `/lp-generators/` | Generators |
+| `/lp-water-pumps/` | Water pumps, including booster pumps |
+| `/lp-pressure-washers/` | Pressure washers and car wash equipment |
+| `/lp-vacuum-cleaners/` | Wet and dry vacuums and carpet cleaners |
+| `/lp-air-compressors/` | Air compressors |
+| `/lp-welding-machines/` | Welders and welder-generators |
+| `/lp-demolition-breakers/` | Demolition breakers |
+| `/lp-grinders/` | Angle grinders |
+| `/lp-hardware-tools/` | Hardware tools and toolsets |
+| `/lp-farm-machinery/` | Agricultural equipment |
+| `/lp-engines/` | Petrol and diesel engines |
+| `/lp-solar-panels/` | Solar panels |
+| `/lp-solar-inverters/` | Solar inverters |
+| `/lp-batteries/` | Batteries |
+| `/lp-weighing-scales/` | Weighing scales |
+
+Short alias URLs also work and canonicalise to the main URL. Examples are `/lp-compressors/`, `/lp-welders/`, `/lp-pumps/` and `/lp-agricultural-equipment/`. Any other `/lp-{category-slug}/` falls back to a generic funnel for that product category.
+
+**Page flow, top to bottom:**
+1. Hero with a live "From KSh" price and the number of models in stock
+2. Trust strip covering delivery, payment, warranty and returns
+3. Popular picks
+4. Benefits
+5. The full range, with price-band filter chips
+6. Buying guide
+7. How ordering works
+8. WhatsApp quick-order form
+9. FAQs
+10. Shop address and hours
+11. Related ranges
+12. Sticky Call / WhatsApp / Shop bar on mobile
+
+**Ordering and tracking:**
+- Add to cart uses the theme's AJAX cart drawer.
+- The WhatsApp form opens a pre-filled order through a real link click, so `Whatsapp_Tracking` records it as the secondary "WhatsApp Order Click" conversion. No new tags are added.
+
+**Editing without code (*WooCommerce > Sales Funnels*):**
+- Pin the "Popular picks" product IDs for each funnel, in order.
+- Override the headline and subheadline.
+- Switch a funnel off.
+
+**Rules built into the funnels:**
+- Products without a featured image are hidden from funnels until a photo is added. Filter: `guruexpertpowertools_funnel_require_image`.
+- Policy wording (delivery, payment, warranty, defective-only returns) comes from `Landing_Funnels::store()`. It must stay identical to the product pages and policy pages.
+- Funnel copy avoids "genuine/original/best" claims, fake counters and urgency. This is required for Merchant Center.
+- Copy is edited in `Landing_Funnels::registry()`, or extended with the `guruexpertpowertools_funnels` filter.
+
+**SEO:** each funnel gets its own title, meta description and canonical, handed to Rank Math when it is active. It also outputs BreadcrumbList, ItemList and FAQPage JSON-LD.
 
 ### WebP Optimizer plugin
 - Converts every JPEG and PNG in the Media Library to WebP and keeps the originals
