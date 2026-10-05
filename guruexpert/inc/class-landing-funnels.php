@@ -623,11 +623,11 @@ final class Landing_Funnels {
 	 */
 	public static function allowed( string $title, array $f ): bool {
 		$words = array_filter( array_map( 'strval', (array) ( $f['exclude'] ?? array() ) ) );
-		if ( \! $words ) {
+		if ( ! $words ) {
 			return true;
 		}
 		$pattern = '/\b(' . implode( '|', array_map( static fn( string $w ): string => preg_quote( $w, '/' ), $words ) ) . ')\b/i';
-		return 1 \!== preg_match( $pattern, $title );
+		return 1 !== preg_match( $pattern, $title );
 	}
 
 	/**
@@ -749,7 +749,7 @@ final class Landing_Funnels {
 		);
 		$extra = self::extras()[ $main ] ?? array();
 		foreach ( array( 'exclude', 'sizes', 'sizes_title' ) as $k ) {
-			if ( empty( $def[ $k ] ) && \! empty( $extra[ $k ] ) ) {
+			if ( empty( $def[ $k ] ) && ! empty( $extra[ $k ] ) ) {
 				$def[ $k ] = $extra[ $k ];
 			}
 		}
@@ -899,7 +899,7 @@ final class Landing_Funnels {
 		$min = 0.0;
 		$count = 0;
 		foreach ( $q->posts as $id ) {
-			if ( \! self::allowed( (string) get_the_title( (int) $id ), $f ) ) {
+			if ( ! self::allowed( (string) get_the_title( (int) $id ), $f ) ) {
 				continue;
 			}
 			++$count;
